@@ -29,4 +29,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
     path('api/import/students/', ImportStudentsView.as_view(), name='import-students'),
+    path('api/analytics/', include('analytics.urls')), 
+     path('api/ml/', include('ml_models.urls')),
 ]
