@@ -57,8 +57,22 @@
             }
           },
           "defaultConfiguration": "production"
-        },
-        "serve": {
+    "serve": {
+  "builder": "@angular/build:dev-server",
+  "options": {
+    "proxyConfig": "src/proxy.conf.json"
+  },
+  "configurations": {
+    "production": {
+      "buildTarget": "academic-frontend:build:production"
+    },
+    "development": {
+      "buildTarget": "academic-frontend:build:development"
+    }
+  },
+  "defaultConfiguration": "development"
+},
+                 "serve": {
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {

@@ -1,7 +1,8 @@
-import { Component, computed } from '@angular/core';
+import { Component, OnInit, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { ApiService } from '../../core/services/api';
 
 interface Student {
   id: number;
@@ -21,14 +22,13 @@ interface Student {
   templateUrl: './students.html',
   styleUrls: ['./students.scss']
 })
-export class StudentsComponent {
+export class StudentsComponent implements OnInit {
 
   searchTerm = '';
   filterFiliere = '';
   filterStatus = '';
 
-  constructor(private router: Router) {}
-
+  // Données statiques par défaut
   students: Student[] = [
     { id: 1, name: 'Abdessamad Benhiri', email: 'a.benhiri@univ.ma', initials: 'AB', filiere: 'Informatique', average: 16.5, status: 'Admis', statusClass: 'success' },
     { id: 2, name: 'Aya Benhadi', email: 'a.benhadi@univ.ma', initials: 'AB', filiere: 'Gestion', average: 9.2, status: 'Risque', statusClass: 'warning' },
@@ -41,6 +41,29 @@ export class StudentsComponent {
     { id: 9, name: 'Hajar Tazi', email: 'h.tazi@univ.ma', initials: 'HT', filiere: 'Sciences', average: 12.7, status: 'Admis', statusClass: 'success' },
     { id: 10, name: 'Mehdi Berrada', email: 'm.berrada@univ.ma', initials: 'MB', filiere: 'Gestion', average: 6.8, status: 'Echec', statusClass: 'danger' },
   ];
+
+  constructor(private router: Router, private api: ApiService) {}
+
+  ngOnInit(): void {
+    this.api.get<any>('students/').subscribe({
+      next: (data) => {
+        const results = data.results || data;
+        this.students = results.map((s: any) => ({
+          id: s.id,
+          name: s.full_name || s.name || `${s.first_name} ${s.last_name}`,
+          email: s.email || `${s.id}@univ.ma`,
+          initials: (s.full_name || s.name || 'XX').split(' ').map((n: string) => n[0]).join('').toUpperCase(),
+          filiere: s.module_code || s.filiere || 'N/A',
+          average: s.avg_score || s.average || 0,
+          status: s.final_result || s.status || 'N/A',
+          statusClass: s.final_result === 'Pass' ? 'success' : s.final_result === 'Fail' ? 'danger' : 'warning'
+        }));
+      },
+      error: () => {
+        console.log('API non disponible, données statiques utilisées');
+      }
+    });
+  }
 
   filteredStudents = computed(() => {
     return this.students.filter(s => {
