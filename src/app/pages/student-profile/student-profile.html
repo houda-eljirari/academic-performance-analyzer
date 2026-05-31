@@ -1,0 +1,83 @@
+<div class="profile-page" *ngIf="student">
+
+  <!-- Header -->
+  <div class="profile-header">
+    <button class="btn-back" (click)="goBack()">← Retour</button>
+    <div class="profile-info">
+      <div class="profile-avatar">{{ student.initials }}</div>
+      <div>
+        <h1>{{ student.name }}</h1>
+        <p>{{ student.email }} · {{ student.filiere }} · {{ student.niveau }}</p>
+      </div>
+      <span class="status-badge" [class]="'status-' + student.statusClass">
+        {{ student.status }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Stat cards -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-label">Moyenne générale</div>
+      <div class="stat-val" [class.val-low]="student.average < 10">
+        {{ student.average }}/20
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Filière</div>
+      <div class="stat-val">{{ student.filiere }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Niveau</div>
+      <div class="stat-val">{{ student.niveau }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Absences</div>
+      <div class="stat-val" [class.val-low]="student.absences > 5">
+        {{ student.absences }}
+      </div>
+    </div>
+  </div>
+
+  <!-- Notes par matière -->
+  <div class="section-card">
+    <h2>Notes par matière</h2>
+    <div class="grades-list">
+      @for (g of student.grades; track g.matiere) {
+        <div class="grade-row">
+          <div class="grade-matiere">{{ g.matiere }}</div>
+          <div class="grade-bar-wrap">
+            <div class="grade-bar"
+                 [style.width]="getBarWidth(g.note)"
+                 [style.background]="getBarColor(g.note)">
+            </div>
+          </div>
+          <div class="grade-note" [class.note-low]="g.note < 10">
+            {{ g.note }}/20
+          </div>
+          <div class="grade-coeff">coeff {{ g.coeff }}</div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Évolution -->
+  <div class="section-card">
+    <h2>Évolution de la moyenne</h2>
+    <div class="evolution-chart">
+      @for (e of student.evolution; track e.mois) {
+        <div class="evo-col">
+          <div class="evo-bar-wrap">
+            <div class="evo-bar"
+                 [style.height]="getEvolutionHeight(e.moyenne)"
+                 [style.background]="getBarColor(e.moyenne)">
+            </div>
+          </div>
+          <div class="evo-val">{{ e.moyenne }}</div>
+          <div class="evo-mois">{{ e.mois }}</div>
+        </div>
+      }
+    </div>
+  </div>
+
+</div>

@@ -16,12 +16,15 @@ interface NavItem {
   styleUrls: ['./sidebar.scss']
 })
 export class SidebarComponent {
+
   navItems: NavItem[] = [
-    { label: 'Dashboard', icon: '⊞', route: '/dashboard' },
-    { label: 'Students', icon: '👥', route: '/students' },
-    { label: 'Grades', icon: '📊', route: '/grades' },
+    { label: 'Dashboard',   icon: '⊞', route: '/dashboard'   },
+    { label: 'Students',    icon: '👥', route: '/students'    },
+    { label: 'Grades',      icon: '📊', route: '/grades'      },
     { label: 'Predictions', icon: '🔮', route: '/predictions' },
-    { label: 'Alerts', icon: '🔔', route: '/alerts' },
+    { label: 'Alerts',      icon: '🔔', route: '/alerts'      },
+    { label: 'Import CSV',  icon: '📂', route: '/csv-import'  },
+      { label: 'SHAP',        icon: '🧠', route: '/shap'      },
   ];
 
   constructor(public router: Router) {}
@@ -31,6 +34,6 @@ export class SidebarComponent {
   }
 
   navigate(route: string): void {
-  this.router.navigate([route]);
-}
+    this.router.navigate([route]);
+  }
 }

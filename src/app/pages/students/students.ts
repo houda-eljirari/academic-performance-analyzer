@@ -1,6 +1,7 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 interface Student {
   id: number;
@@ -26,6 +27,8 @@ export class StudentsComponent {
   filterFiliere = '';
   filterStatus = '';
 
+  constructor(private router: Router) {}
+
   students: Student[] = [
     { id: 1, name: 'Abdessamad Benhiri', email: 'a.benhiri@univ.ma', initials: 'AB', filiere: 'Informatique', average: 16.5, status: 'Admis', statusClass: 'success' },
     { id: 2, name: 'Aya Benhadi', email: 'a.benhadi@univ.ma', initials: 'AB', filiere: 'Gestion', average: 9.2, status: 'Risque', statusClass: 'warning' },
@@ -48,4 +51,8 @@ export class StudentsComponent {
       return matchSearch && matchFiliere && matchStatus;
     });
   });
+
+  viewProfile(id: number): void {
+    this.router.navigate(['/students', id]);
+  }
 }

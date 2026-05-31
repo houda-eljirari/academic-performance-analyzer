@@ -8,7 +8,6 @@
     <button class="btn-add">+ Ajouter un étudiant</button>
   </div>
 
-  <!-- Barre de recherche et filtres -->
   <div class="filters-bar">
     <div class="search-box">
       <span class="search-icon">🔍</span>
@@ -33,7 +32,6 @@
     </select>
   </div>
 
-  <!-- Tableau -->
   <div class="table-card">
     <table class="students-table">
       <thead>
@@ -68,7 +66,7 @@
               </span>
             </td>
             <td class="td-actions">
-              <button class="btn-view">👁 Voir</button>
+              <button class="btn-view" (click)="viewProfile(student.id)">👁 Voir</button>
               <button class="btn-edit">✏️ Modifier</button>
             </td>
           </tr>
@@ -77,7 +75,6 @@
     </table>
   </div>
 
-  <!-- Total -->
   <div class="table-footer">
     {{ filteredStudents().length }} étudiant(s) trouvé(s)
   </div>
