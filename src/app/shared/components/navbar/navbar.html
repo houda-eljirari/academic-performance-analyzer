@@ -1,1 +1,16 @@
-<p>navbar works!</p>
+<nav class="navbar">
+  <div class="navbar__brand">
+    <span class="navbar__icon">🎓</span>
+    <span class="navbar__title">AcademiX</span>
+  </div>
+  <div class="navbar__center">
+    <span class="navbar__date">{{ currentTime | date:'EEEE, d MMM yyyy' }}</span>
+  </div>
+  <div class="navbar__actions">
+    <div class="navbar__user" *ngIf="user">
+      <div class="navbar__avatar">{{ user.name[0] }}</div>
+      <span class="navbar__name">{{ user.name }}</span>
+    </div>
+    <button class="navbar__logout" (click)="logout()">Logout</button>
+  </div>
+</nav>

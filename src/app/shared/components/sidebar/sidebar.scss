@@ -1,0 +1,40 @@
+.sidebar {
+  width: 220px;
+  min-height: calc(100vh - 64px);
+  background: #0f1117;
+  border-right: 1px solid #1e2235;
+  padding: 24px 12px;
+
+  &__nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    text-decoration: none;
+    color: #6b7280;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+
+    &:hover {
+      background: #1e2235;
+      color: #e2e8f0;
+    }
+
+    &--active {
+      background: linear-gradient(135deg, rgba(102,126,234,0.2), rgba(118,75,162,0.2));
+      color: #a78bfa;
+      border: 1px solid rgba(102,126,234,0.3);
+    }
+  }
+
+  &__item-icon { font-size: 18px; }
+  &__item-label { font-family: sans-serif; }
+}
