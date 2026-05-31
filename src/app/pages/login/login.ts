@@ -6,35 +6,43 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [
-    CommonModule,  // pour *ngIf
-    FormsModule,   // pour [(ngModel)]
-  ],
+  imports: [CommonModule, FormsModule],
   templateUrl: './login.html',
-  styleUrl: './login.scss',
+  styleUrls: ['./login.scss']
 })
-export class Login {
-
-  // Les champs du formulaire
-  email: string = '';
-  password: string = '';
-  errorMsg: string = '';
+export class LoginComponent {
+  email = '';
+  password = '';
+  loading = false;
+  error = '';
 
   constructor(private router: Router) {}
 
-  onLogin() {
-    // Vérification basique
+  onSubmit(): void {
     if (!this.email || !this.password) {
-      this.errorMsg = 'Veuillez remplir tous les champs.';
+      this.error = 'Please fill in all fields';
       return;
     }
 
-    // Pour l'instant on simule la connexion
-    // Plus tard on appellera l'API Django de ton binôme
-    if (this.email === 'admin@test.com' && this.password === '1234') {
-      this.router.navigate(['/dashboard']);
-    } else {
-      this.errorMsg = 'Email ou mot de passe incorrect.';
-    }
+    this.loading = true;
+    this.error = '';
+
+    // Simulation connexion — à remplacer par l'API Django plus tard
+    setTimeout(() => {
+      if (this.email === 'admin@test.com' && this.password === '1234') {
+        localStorage.setItem('token', 'fake-token-123');
+        localStorage.setItem('user', JSON.stringify({
+          id: 1,
+          email: this.email,
+          name: 'Admin',
+          role: 'admin',
+          token: 'fake-token-123'
+        }));
+        this.router.navigate(['/dashboard']);
+      } else {
+        this.error = 'Email ou mot de passe incorrect';
+        this.loading = false;
+      }
+    }, 1000);
   }
 }

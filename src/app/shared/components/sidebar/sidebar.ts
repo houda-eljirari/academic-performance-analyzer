@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { RouterModule, Router } from '@angular/router';
 
 interface NavItem {
   label: string;
@@ -9,6 +10,8 @@ interface NavItem {
 
 @Component({
   selector: 'app-sidebar',
+  standalone: true,
+  imports: [CommonModule, RouterModule],
   templateUrl: './sidebar.html',
   styleUrls: ['./sidebar.scss']
 })
@@ -26,4 +29,8 @@ export class SidebarComponent {
   isActive(route: string): boolean {
     return this.router.url === route;
   }
+
+  navigate(route: string): void {
+  this.router.navigate([route]);
+}
 }

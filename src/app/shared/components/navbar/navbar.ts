@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule, DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService, AuthUser } from '../../../core/services/auth';
 
 @Component({
   selector: 'app-navbar',
+  standalone: true,
+  imports: [CommonModule, DatePipe],
   templateUrl: './navbar.html',
   styleUrls: ['./navbar.scss']
 })

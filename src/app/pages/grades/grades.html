@@ -1,1 +1,80 @@
-<p>grades works!</p>
+<div class="grades-page">
+
+  <div class="page-header">
+    <div>
+      <h1>Notes</h1>
+      <p>Saisie et gestion des notes par matière</p>
+    </div>
+    <button class="btn-save" (click)="saveGrades()">💾 Enregistrer</button>
+  </div>
+
+  <!-- Filtres -->
+  <div class="filters-bar">
+    <select [(ngModel)]="selectedMatiere" class="filter-select">
+      <option value="">Toutes les matières</option>
+      @for (m of matieres; track m) {
+        <option [value]="m">{{ m }}</option>
+      }
+    </select>
+    <select [(ngModel)]="selectedSemestre" class="filter-select">
+      <option value="S1">Semestre 1</option>
+      <option value="S2">Semestre 2</option>
+    </select>
+  </div>
+
+  <!-- Tableau de saisie -->
+  <div class="table-card">
+    <table class="grades-table">
+      <thead>
+        <tr>
+          <th>Étudiant</th>
+          <th>Filière</th>
+          @for (m of matieres; track m) {
+            <th>{{ m }}</th>
+          }
+          <th>Moyenne</th>
+          <th>Statut</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of gradesData; track row.studentId) {
+          <tr>
+            <td class="td-student">
+              <div class="student-avatar">{{ row.initials }}</div>
+              <span>{{ row.name }}</span>
+            </td>
+            <td><span class="filiere-badge">{{ row.filiere }}</span></td>
+            @for (m of matieres; track m) {
+              <td>
+                <input
+                  type="number"
+                  class="grade-input"
+                  [class.grade-low]="row.grades[m] < 10"
+                  [(ngModel)]="row.grades[m]"
+                  min="0" max="20" step="0.5"
+                  (ngModelChange)="updateAverage(row)"
+                />
+              </td>
+            }
+            <td>
+              <span class="avg-val" [class.avg-low]="row.average < 10">
+                {{ row.average | number:'1.1-1' }}
+              </span>
+            </td>
+            <td>
+              <span class="status-badge" [class]="'status-' + row.statusClass">
+                {{ row.status }}
+              </span>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Message de confirmation -->
+  @if (saved) {
+    <div class="save-msg">✅ Notes enregistrées avec succès !</div>
+  }
+
+</div>

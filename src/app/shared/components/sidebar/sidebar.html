@@ -1,13 +1,12 @@
 <aside class="sidebar">
   <nav class="sidebar__nav">
-    
-      *ngFor="let item of navItems"
-      [routerLink]="item.route"
-      class="sidebar__item"
-      [class.sidebar__item--active]="isActive(item.route)"
-    >
-      <span class="sidebar__item-icon">{{ item.icon }}</span>
-      <span class="sidebar__item-label">{{ item.label }}</span>
-    </a>
+    @for (item of navItems; track item.route) {
+      <div class="sidebar__item"
+           [class.sidebar__item--active]="isActive(item.route)"
+           (click)="navigate(item.route)">
+        <span class="sidebar__item-icon">{{ item.icon }}</span>
+        <span class="sidebar__item-label">{{ item.label }}</span>
+      </div>
+    }
   </nav>
 </aside>

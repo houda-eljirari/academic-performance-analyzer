@@ -1,43 +1,24 @@
-<div class="login-wrapper">
+<div class="login-page">
   <div class="login-card">
-
-    <div class="login-header">
-      <span class="logo">◈</span>
-      <h1 class="app-name">AcadémIA</h1>
-      <p class="app-desc">Analyse de performance académique</p>
+    <div class="login-card__header">
+      <span class="login-card__icon">🎓</span>
+      <h1>AcademiX</h1>
+      <p>Sign in to your academic portal</p>
     </div>
-
-    <div class="login-form">
-
+    <div class="login-card__form">
+      <div class="form-error" *ngIf="error">{{ error }}</div>
       <div class="form-group">
-        <label class="form-label">Email</label>
-        <input
-          type="email"
-          class="form-input"
-          placeholder="exemple@université.ma"
-          [(ngModel)]="email"
-        />
+        <label>Email</label>
+        <input type="email" [(ngModel)]="email" placeholder="you@university.edu" />
       </div>
-
       <div class="form-group">
-        <label class="form-label">Mot de passe</label>
-        <input
-          type="password"
-          class="form-input"
-          placeholder="••••••••"
-          [(ngModel)]="password"
-        />
+        <label>Password</label>
+        <input type="password" [(ngModel)]="password" placeholder="••••••••" (keyup.enter)="onSubmit()" />
       </div>
-
-      @if (errorMsg) {
-        <div class="error-msg">{{ errorMsg }}</div>
-      }
-
-      <button class="btn-login" (click)="onLogin()">
-        Se connecter
+      <button class="login-btn" (click)="onSubmit()" [disabled]="loading">
+        <span *ngIf="!loading">Sign In</span>
+        <span *ngIf="loading">Signing in...</span>
       </button>
-
     </div>
-
   </div>
 </div>

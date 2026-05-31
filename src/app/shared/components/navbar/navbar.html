@@ -8,8 +8,8 @@
   </div>
   <div class="navbar__actions">
     <div class="navbar__user" *ngIf="user">
-      <div class="navbar__avatar">{{ user.name[0] }}</div>
-      <span class="navbar__name">{{ user.name }}</span>
+      <div class="navbar__avatar">{{ user!.name[0] }}</div>
+      <span class="navbar__name">{{ user!.name }}</span>
     </div>
     <button class="navbar__logout" (click)="logout()">Logout</button>
   </div>
