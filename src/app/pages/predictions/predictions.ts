@@ -22,13 +22,13 @@ interface StudentShap {
 }
 
 @Component({
-  selector: 'app-shap',
+  selector: 'app-predictions',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './shap.html',
-  styleUrls: ['./shap.scss']
+  templateUrl: '../shap/shap.html',
+  styleUrls: ['../shap/shap.scss']
 })
-export class Shap implements OnInit {
+export class Predictions implements OnInit {
 
   selectedStudentId = 1;
   loading = false;

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 
 interface ShapFeature {
   feature: string;
@@ -29,8 +30,32 @@ interface StudentShap {
 })
 export class Shap {
 
+  constructor(private http: HttpClient) {}
+
   selectedStudentId = 1;
 
+  ngOnInit() {
+  this.loadShap(this.selectedStudentId);
+}
+
+  loadShap(studentId: number) {
+
+  this.http.post(
+    `http://localhost:8000/api/ml/predict/${studentId}/`,
+    {}
+  ).subscribe({
+
+    next: (response: any) => {
+      console.log('Réponse Django:', response);
+    },
+
+    error: (err) => {
+      console.error('Erreur API:', err);
+    }
+
+  });
+
+}
   students: StudentShap[] = [
     {
       id: 1, name: 'Abdessamad Benhiri', initials: 'AB',
