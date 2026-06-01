@@ -1,0 +1,83 @@
+import { Component, computed, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+interface Alert {
+  id: number;
+  type: 'danger' | 'warning' | 'info';
+  icon: string;
+  title: string;
+  message: string;
+  student: string;
+  time: string;
+  resolved: boolean;
+}
+
+@Component({
+  selector: 'app-alerts',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './alerts.html',
+  styleUrls: ['./alerts.scss']
+})
+export class Alerts {
+
+  activeFilter = 'all';
+  resolvedCount = 0;
+
+  alerts: Alert[] = [
+    { id: 1, type: 'danger', icon: '🚨', title: 'Note critique',
+      message: 'Note de 4.5/20 en Mathématiques — en dessous du seuil critique',
+      student: 'Ali Jbira', time: 'il y a 10 min', resolved: false },
+    { id: 2, type: 'danger', icon: '🚨', title: 'Absences répétées',
+      message: '5 absences consécutives en Algorithmique ce mois',
+      student: 'Aya Benhadi', time: 'il y a 25 min', resolved: false },
+    { id: 3, type: 'warning', icon: '⚠️', title: 'Baisse de moyenne',
+      message: 'Moyenne en baisse de 3.2 points par rapport au semestre précédent',
+      student: 'Fatima Zahra Idrissi', time: 'il y a 1h', resolved: false },
+    { id: 4, type: 'warning', icon: '⚠️', title: 'Risque d\'échec prédit',
+      message: 'Le modèle IA prédit un risque d\'échec à 68% pour ce semestre',
+      student: 'Mehdi Berrada', time: 'il y a 2h', resolved: false },
+    { id: 5, type: 'info', icon: '📋', title: 'Nouveau dossier',
+      message: 'Un nouveau dossier d\'inscription a été soumis pour validation',
+      student: 'Omar Chraibi', time: 'il y a 3h', resolved: false },
+    { id: 6, type: 'info', icon: '📊', title: 'Rapport disponible',
+      message: 'Le rapport de performance du semestre 1 est disponible',
+      student: 'Système', time: 'il y a 5h', resolved: false },
+  ];
+
+  filteredAlerts = computed(() => {
+    return this.alerts.filter(a => {
+      if (this.activeFilter === 'all') return !a.resolved;
+      return a.type === this.activeFilter && !a.resolved;
+    });
+  });
+
+  get dangerCount(): number {
+    return this.alerts.filter(a => a.type === 'danger' && !a.resolved).length;
+  }
+
+  get warningCount(): number {
+    return this.alerts.filter(a => a.type === 'warning' && !a.resolved).length;
+  }
+
+  get infoCount(): number {
+    return this.alerts.filter(a => a.type === 'info' && !a.resolved).length;
+  }
+
+  setFilter(filter: string): void {
+    this.activeFilter = filter;
+  }
+
+  resolve(id: number): void {
+    const alert = this.alerts.find(a => a.id === id);
+    if (alert) {
+      alert.resolved = true;
+      this.resolvedCount++;
+    }
+  }
+
+  clearAll(): void {
+    this.alerts.forEach(a => a.resolved = true);
+    this.resolvedCount = this.alerts.length;
+  }
+}

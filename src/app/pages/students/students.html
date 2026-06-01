@@ -1,0 +1,82 @@
+<div class="students-page">
+
+  <div class="page-header">
+    <div>
+      <h1>Étudiants</h1>
+      <p>Gestion et suivi des étudiants inscrits</p>
+    </div>
+    <button class="btn-add">+ Ajouter un étudiant</button>
+  </div>
+
+  <div class="filters-bar">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input
+        type="text"
+        placeholder="Rechercher un étudiant..."
+        [(ngModel)]="searchTerm"
+      />
+    </div>
+    <select [(ngModel)]="filterFiliere" class="filter-select">
+      <option value="">Toutes les filières</option>
+      <option value="Informatique">Informatique</option>
+      <option value="Gestion">Gestion</option>
+      <option value="Droit">Droit</option>
+      <option value="Sciences">Sciences</option>
+    </select>
+    <select [(ngModel)]="filterStatus" class="filter-select">
+      <option value="">Tous les statuts</option>
+      <option value="Admis">Admis</option>
+      <option value="Risque">À risque</option>
+      <option value="Echec">Échec</option>
+    </select>
+  </div>
+
+  <div class="table-card">
+    <table class="students-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Étudiant</th>
+          <th>Filière</th>
+          <th>Moyenne</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (student of filteredStudents(); track student.id) {
+          <tr>
+            <td class="td-id">{{ student.id }}</td>
+            <td class="td-student">
+              <div class="student-avatar">{{ student.initials }}</div>
+              <div>
+                <div class="student-name">{{ student.name }}</div>
+                <div class="student-email">{{ student.email }}</div>
+              </div>
+            </td>
+            <td><span class="filiere-badge">{{ student.filiere }}</span></td>
+            <td>
+              <span class="avg-val">{{ student.average }}</span>
+              <span class="avg-total">/20</span>
+            </td>
+            <td>
+              <span class="status-badge" [class]="'status-' + student.statusClass">
+                {{ student.status }}
+              </span>
+            </td>
+            <td class="td-actions">
+              <button class="btn-view" (click)="viewProfile(student.id)">👁 Voir</button>
+              <button class="btn-edit">✏️ Modifier</button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="table-footer">
+    {{ filteredStudents().length }} étudiant(s) trouvé(s)
+  </div>
+
+</div>

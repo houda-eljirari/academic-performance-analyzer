@@ -1,0 +1,45 @@
+<div class="dashboard">
+  <div class="dashboard__header">
+    <h1>Dashboard</h1>
+    <p>Academic overview — {{ today | date:'MMMM yyyy' }}</p>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card stat-card--blue">
+      <div class="stat-card__icon">👥</div>
+      <div class="stat-card__value">{{ stats.totalStudents }}</div>
+      <div class="stat-card__label">Total Students</div>
+    </div>
+    <div class="stat-card stat-card--green">
+      <div class="stat-card__icon">📊</div>
+      <div class="stat-card__value">{{ stats.avgGrade }}/20</div>
+      <div class="stat-card__label">Average Grade</div>
+    </div>
+    <div class="stat-card stat-card--red">
+      <div class="stat-card__icon">⚠️</div>
+      <div class="stat-card__value">{{ stats.atRiskStudents }}</div>
+      <div class="stat-card__label">At-Risk Students</div>
+    </div>
+    <div class="stat-card stat-card--yellow">
+      <div class="stat-card__icon">🔔</div>
+      <div class="stat-card__value">{{ stats.pendingAlerts }}</div>
+      <div class="stat-card__label">Pending Alerts</div>
+    </div>
+  </div>
+
+  <div class="dashboard__section">
+    <h2>Recent Activity</h2>
+    <div class="activity-list">
+      @for (item of recentActivity; track item.student) {
+        <div class="activity-item">
+          <div class="activity-item__dot" [class]="'activity-item__dot--' + item.type"></div>
+          <div class="activity-item__info">
+            <strong>{{ item.student }}</strong> — {{ item.action }}
+            <span class="activity-item__subject">{{ item.subject }}</span>
+          </div>
+          <div class="activity-item__time">{{ item.time }}</div>
+        </div>
+      }
+    </div>
+  </div>
+</div>

@@ -1,0 +1,224 @@
+.shap-page {
+  padding: 32px;
+  font-family: 'DM Sans', sans-serif;
+  color: #e2e8f0;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+
+  h1 { font-size: 26px; font-weight: 700; color: #fff; margin: 0 0 4px; }
+  p  { font-size: 13px; color: #64748b; margin: 0; }
+}
+
+.ai-badge {
+  background: rgba(124,58,237,0.15);
+  border: 1px solid rgba(124,58,237,0.3);
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 13px;
+  color: #c4b5fd;
+  font-weight: 500;
+}
+
+.student-selector {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+
+  label { font-size: 13px; color: #94a3b8; }
+
+  select {
+    background: #0d1624;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    padding: 8px 14px;
+    color: #e2e8f0;
+    font-size: 13px;
+    outline: none;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    &:focus { border-color: #7c3aed; }
+  }
+}
+
+.pred-card {
+  background: #0d1624;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  margin-bottom: 20px;
+}
+
+.pred-student {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.student-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(124,58,237,0.2);
+  color: #c4b5fd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.student-name    { font-size: 15px; font-weight: 500; color: #e2e8f0; }
+.student-filiere { font-size: 12px; color: #64748b; margin-top: 2px; }
+
+.pred-result, .pred-confidence {
+  text-align: center;
+}
+
+.pred-label {
+  font-size: 11px;
+  color: #64748b;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.pred-badge {
+  font-size: 13px;
+  padding: 5px 16px;
+  border-radius: 20px;
+  font-weight: 500;
+  &.pred-success { background: rgba(5,150,105,0.15);  color: #34d399; }
+  &.pred-warning { background: rgba(217,119,6,0.15);  color: #fcd34d; }
+  &.pred-danger  { background: rgba(220,38,38,0.15);  color: #fca5a5; }
+}
+
+.confidence-val {
+  font-size: 22px;
+  font-weight: 700;
+  color: #e2e8f0;
+}
+
+.shap-card {
+  background: #0d1624;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 24px;
+
+  h2 { font-size: 15px; font-weight: 500; color: #e2e8f0; margin: 0 0 8px; }
+}
+
+.shap-desc {
+  font-size: 12px;
+  color: #64748b;
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+.pos-label { color: #34d399; }
+.neg-label { color: #fca5a5; }
+
+.shap-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.shap-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.shap-feature {
+  width: 180px;
+  font-size: 13px;
+  color: #94a3b8;
+  flex-shrink: 0;
+}
+
+.shap-value-box {
+  width: 40px;
+  text-align: center;
+  font-size: 12px;
+  color: #475569;
+  flex-shrink: 0;
+}
+
+.shap-bar-wrap {
+  flex: 1;
+  height: 24px;
+  background: #111b2e;
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.shap-bar-pos {
+  height: 100%;
+  background: linear-gradient(90deg, #059669, #34d399);
+  border-radius: 4px;
+  transition: width 0.5s ease;
+  min-width: 4px;
+}
+
+.shap-bar-neg {
+  height: 100%;
+  background: linear-gradient(90deg, #dc2626, #f87171);
+  border-radius: 4px;
+  transition: width 0.5s ease;
+  min-width: 4px;
+}
+
+.shap-contribution {
+  width: 50px;
+  text-align: right;
+  font-size: 13px;
+  font-weight: 600;
+  flex-shrink: 0;
+
+  &.pos { color: #34d399; }
+  &.neg { color: #fca5a5; }
+}
+
+.shap-summary {
+  display: flex;
+  gap: 16px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding-top: 16px;
+}
+
+.summary-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+
+  strong { font-size: 16px; font-weight: 700; }
+
+  &.summary-pos {
+    background: rgba(5,150,105,0.08);
+    border: 1px solid rgba(5,150,105,0.15);
+    color: #34d399;
+  }
+  &.summary-neg {
+    background: rgba(220,38,38,0.08);
+    border: 1px solid rgba(220,38,38,0.15);
+    color: #fca5a5;
+  }
+}

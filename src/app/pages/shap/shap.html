@@ -1,0 +1,87 @@
+<div class="shap-page">
+
+  <div class="page-header">
+    <div>
+      <h1>Visualisation SHAP</h1>
+      <p>Explication des prédictions par le modèle IA</p>
+    </div>
+    <div class="ai-badge">🧠 SHAP Explainability</div>
+  </div>
+
+  <!-- Sélection étudiant -->
+  <div class="student-selector">
+    <label>Choisir un étudiant :</label>
+    <select [(ngModel)]="selectedStudentId" [ngModel]="selectedStudentId"
+            (ngModelChange)="selectedStudentId = +$event">
+      @for (s of students; track s.id) {
+        <option [value]="s.id">{{ s.name }}</option>
+      }
+    </select>
+  </div>
+
+  <!-- Profil de prédiction -->
+  <div class="pred-card">
+    <div class="pred-student">
+      <div class="student-avatar">{{ selectedStudent.initials }}</div>
+      <div>
+        <div class="student-name">{{ selectedStudent.name }}</div>
+        <div class="student-filiere">{{ selectedStudent.filiere }}</div>
+      </div>
+    </div>
+    <div class="pred-result">
+      <div class="pred-label">Résultat prédit</div>
+      <span class="pred-badge" [class]="'pred-' + selectedStudent.predClass">
+        {{ selectedStudent.prediction }}
+      </span>
+    </div>
+    <div class="pred-confidence">
+      <div class="pred-label">Confiance</div>
+      <div class="confidence-val">{{ selectedStudent.confidence }}%</div>
+    </div>
+  </div>
+
+  <!-- Explication SHAP -->
+  <div class="shap-card">
+    <h2>Facteurs d'influence</h2>
+    <p class="shap-desc">
+      Chaque barre montre l'impact d'une variable sur la prédiction.
+      <span class="pos-label">🟢 Positif</span> = favorise le succès ·
+      <span class="neg-label">🔴 Négatif</span> = augmente le risque
+    </p>
+
+    <div class="shap-list">
+      @for (f of selectedStudent.features; track f.feature) {
+        <div class="shap-row">
+          <div class="shap-feature">{{ f.feature }}</div>
+          <div class="shap-value-box">{{ f.value }}</div>
+          <div class="shap-bar-wrap">
+            @if (f.direction === 'positive') {
+              <div class="shap-bar-pos" [style.width]="getBarWidth(f.contribution)">
+              </div>
+            } @else {
+              <div class="shap-bar-neg" [style.width]="getBarWidth(f.contribution)">
+              </div>
+            }
+          </div>
+          <div class="shap-contribution" [class.pos]="f.direction === 'positive'"
+               [class.neg]="f.direction === 'negative'">
+            {{ f.contribution > 0 ? '+' : '' }}{{ f.contribution }}
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Résumé -->
+    <div class="shap-summary">
+      <div class="summary-item summary-pos">
+        <span>✅ Impact positif total</span>
+        <strong>+{{ getTotalPositive().toFixed(1) }}</strong>
+      </div>
+      <div class="summary-item summary-neg">
+        <span>❌ Impact négatif total</span>
+        <strong>{{ getTotalNegative().toFixed(1) }}</strong>
+      </div>
+    </div>
+  </div>
+
+</div>

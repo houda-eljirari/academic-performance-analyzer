@@ -1,0 +1,118 @@
+<div class="csv-page">
+
+  <div class="page-header">
+    <div>
+      <h1>Import CSV</h1>
+      <p>Importer des étudiants depuis un fichier CSV</p>
+    </div>
+  </div>
+
+  <!-- Format attendu -->
+  <div class="format-card">
+    <div class="format-title">📋 Format attendu du fichier CSV</div>
+    <div class="format-example">
+      nom, email, filiere, moyenne<br>
+      Abdessamad Benhiri, a.benhiri@univ.ma, Informatique, 16.5<br>
+      Aya Benhadi, a.benhadi@univ.ma, Gestion, 9.2
+    </div>
+  </div>
+
+  <!-- Zone de drop -->
+  @if (!preview.length && !imported) {
+    <div class="drop-zone"
+         [class.dragging]="isDragging"
+         (dragover)="onDragOver($event)"
+         (dragleave)="onDragLeave()"
+         (drop)="onDrop($event)">
+      <div class="drop-icon">📂</div>
+      <div class="drop-title">Glissez votre fichier CSV ici</div>
+      <div class="drop-sub">ou</div>
+      <label class="btn-browse">
+        Parcourir les fichiers
+        <input type="file" accept=".csv" (change)="onFileSelected($event)" hidden />
+      </label>
+    </div>
+  }
+
+  <!-- Erreur -->
+  @if (error) {
+    <div class="error-msg">❌ {{ error }}</div>
+  }
+
+  <!-- Chargement -->
+  @if (importing) {
+    <div class="loading-card">
+      <div class="spinner"></div>
+      <span>Analyse du fichier en cours...</span>
+    </div>
+  }
+
+  <!-- Aperçu -->
+  @if (preview.length && !imported) {
+    <div class="preview-section">
+      <div class="preview-header">
+        <h2>Aperçu — {{ fileName }}</h2>
+        <div class="preview-stats">
+          <span class="stat-valid">✅ {{ validCount }} valides</span>
+          <span class="stat-invalid">❌ {{ invalidCount }} invalides</span>
+        </div>
+      </div>
+
+      <div class="table-card">
+        <table class="preview-table">
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Email</th>
+              <th>Filière</th>
+              <th>Moyenne</th>
+              <th>Statut</th>
+              <th>Validité</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (s of preview; track s.email) {
+              <tr [class.row-invalid]="!s.valid">
+                <td>{{ s.nom }}</td>
+                <td>{{ s.email }}</td>
+                <td>{{ s.filiere }}</td>
+                <td [class.note-low]="s.moyenne < 10">{{ s.moyenne }}/20</td>
+                <td>
+                  <span class="status-badge"
+                        [class]="s.moyenne >= 12 ? 'status-success' : s.moyenne >= 10 ? 'status-warning' : 'status-danger'">
+                    {{ s.status }}
+                  </span>
+                </td>
+                <td>
+                  @if (s.valid) {
+                    <span class="valid-ok">✅ OK</span>
+                  } @else {
+                    <span class="valid-err">❌ Erreur</span>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="action-row">
+        <button class="btn-cancel" (click)="reset()">Annuler</button>
+        <button class="btn-import" (click)="importData()">
+          ⬆️ Importer {{ validCount }} étudiants
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Succès -->
+  @if (imported) {
+    <div class="success-card">
+      <div class="success-icon">🎉</div>
+      <h2>Import réussi !</h2>
+      <p>{{ validCount }} étudiants ont été importés avec succès.</p>
+      <button class="btn-import" (click)="reset()">Importer un autre fichier</button>
+    </div>
+  }
+
+</div>
