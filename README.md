@@ -1,5 +1,5 @@
 # academic-performance-analyzer
-# 🎓 Academic Performance Analyzer
+# Academic Performance Analyzer
 
 Application web intelligente d'analyse de performance académique développée dans le cadre du module **SDIA — Systèmes Distribués et Intelligence Artificielle** (Projet Technologies Web).
 
@@ -8,34 +8,110 @@ Application web intelligente d'analyse de performance académique développée d
 ---
 
 
-##  État d'avancement
+# Installation et Exécution du Projet
 
-### Membre 1 — Backend (Django + ML) — 70% terminé
+## 1. Cloner le dépôt
 
-| Module | Statut |
-|--------|--------|
-| Setup Django (projet, apps, config, CORS) | ✅ Terminé |
-| Modèles de données OULAD (Student, Assessment, VLE...) | ✅ Terminé |
-| API REST complète (15 endpoints) | ✅ Terminé |
-| Import CSV dataset OULAD | ✅ Terminé |
-| Endpoints analytiques (stats, distribution, VLE...) | ✅ Terminé |
-| Feature engineering + Random Forest + SHAP | ✅ Terminé |
-| API prédiction individuelle + en lot | 🔄 En cours |
-| Détection étudiants à risque | 🔄 En cours |
-| API recommandations personnalisées | ⏳ À faire |
-| Tests unitaires + documentation | ⏳ À faire |
+```bash
+git clone https://github.com/houda-eljirari/academic-performance-analyzer.git
+cd academic-performance-analyzer
+```
 
-### Membre 2 — Frontend (React) — À démarrer
+---
 
-| Module | Statut |
-|--------|--------|
-| Setup React + layout + navigation | ⏳ À faire |
-| Page import CSV | ⏳ À faire |
-| Dashboard analytique (Recharts) | ⏳ À faire |
-| Page profil étudiant | ⏳ À faire |
-| Page étudiants à risque + SHAP | ⏳ À faire |
-| Présentation PPT | ⏳ À faire |
-| Vidéo démo | ⏳ À faire |
+## 2. Configuration du Backend (Django)
+
+### Créer et activer un environnement virtuel
+
+#### Windows
+
+```bash
+python -m venv venv
+venv\Scripts\activate
+```
+
+#### Linux / MacOS
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+### Installer les dépendances Python
+
+```bash
+pip install -r requirements.txt
+```
+
+### Appliquer les migrations
+
+```bash
+python manage.py migrate
+```
+
+### Lancer le serveur Django
+
+```bash
+python manage.py runserver 8000
+```
+
+Le backend sera accessible à l'adresse :
+
+```text
+http://127.0.0.1:8000
+```
+
+---
+
+## 3. Configuration du Frontend (Angular)
+
+Ouvrir un nouveau terminal à la racine du projet.
+
+### Installer les dépendances Node.js
+
+```bash
+npm install
+```
+
+### Lancer l'application Angular
+
+```bash
+npm start
+```
+
+Le frontend sera accessible à l'adresse :
+
+```text
+http://localhost:4200
+```
+
+---
+
+## 4. Vérification du fonctionnement
+
+Une fois les deux serveurs démarrés :
+
+* Backend Django : http://127.0.0.1:8000
+* Frontend Angular : http://localhost:4200
+
+Vérifier que :
+
+* Le tableau de bord s'affiche correctement.
+* La liste des étudiants est accessible.
+* Les prédictions peuvent être consultées.
+* Les explications SHAP sont affichées.
+* Les appels API retournent un code HTTP 200.
+
+Pour observer les requêtes API :
+
+1. Ouvrir l'application Angular.
+2. Appuyer sur F12.
+3. Ouvrir l'onglet **Network**.
+4. Vérifier les appels vers :
+
+```text
+http://localhost:8000/api/
+```
 
 ---
 
