@@ -15,21 +15,28 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
+# config/urls.py
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from students.views import StudentViewSet, ModuleViewSet
-from students.import_views import ImportStudentsView
+from students.import_views import (
+    ImportStudentsView,
+    ImportAssessmentsView,
+    ImportVLEView,
+)
 
 router = DefaultRouter()
 router.register(r'students', StudentViewSet, basename='student')
 router.register(r'modules',  ModuleViewSet,  basename='module')
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/', include(router.urls)),
-    path('api/import/students/', ImportStudentsView.as_view(), name='import-students'),
-    path('api/analytics/', include('analytics.urls')), 
-    path('api/ml/', include('ml_models.urls')),
-    path('api/predictions/', include('predictions.urls')),
+    path('admin/',                  admin.site.urls),
+    path('api/',                    include(router.urls)),
+    path('api/import/students/',    ImportStudentsView.as_view(),    name='import-students'),
+    path('api/import/assessments/', ImportAssessmentsView.as_view(), name='import-assessments'),
+    path('api/import/vle/',         ImportVLEView.as_view(),         name='import-vle'),
+    path('api/analytics/',          include('analytics.urls')),
+    path('api/ml/',                 include('ml_models.urls')),
+    path('api/predictions/',        include('predictions.urls')),
 ]

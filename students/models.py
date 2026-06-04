@@ -45,7 +45,8 @@ class Assessment(models.Model):
         ('Exam', 'Exam'),
     ]
 
-    id_assessment    = models.IntegerField(unique=True)
+    # SUPPRIMER unique=True ici — plusieurs étudiants ont le même id_assessment
+    id_assessment    = models.IntegerField()   # ← plus de unique=True
     student          = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='assessments')
     module           = models.ForeignKey(Module, on_delete=models.CASCADE, related_name='assessments')
     assessment_type  = models.CharField(max_length=10, choices=ASSESSMENT_TYPES)
@@ -54,9 +55,12 @@ class Assessment(models.Model):
     weight           = models.FloatField(default=0)
     is_banked        = models.BooleanField(default=False)
 
+    class Meta:
+        # La combinaison (étudiant + assessment) doit être unique
+        unique_together = ('id_assessment', 'student')
+
     def __str__(self):
         return f"Assessment {self.id_assessment} — Student {self.student.id_student}"
-
 
 class VLEActivity(models.Model):
     student          = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='vle_activities')
