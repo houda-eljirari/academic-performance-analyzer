@@ -81,3 +81,32 @@ class BulkPredictView(APIView):
                 })
 
         return Response(results)
+    
+class PredictByPkView(APIView):
+    """POST /api/ml/predict/pk/<pk>/ — prédit par clé primaire Django"""
+
+    def post(self, request, pk):
+        from students.models import Student
+        try:
+            student = Student.objects.get(pk=pk)
+        except Student.DoesNotExist:
+            try:
+                student = Student.objects.get(id_student=pk)
+            except Student.DoesNotExist:
+                return Response({'error': f'Étudiant {pk} introuvable.'}, status=404)
+
+        result = predict_student(student.id_student)
+        if 'error' in result:
+            return Response(result, status=404)
+
+        from predictions.models import Prediction
+        Prediction.objects.update_or_create(
+            student=student,
+            defaults={
+                'result':      result['result'],
+                'probability': result['probability'],
+                'risk_level':  result['risk_level'],
+                'shap_values': result['shap_values'],
+            }
+        )
+        return Response(result)

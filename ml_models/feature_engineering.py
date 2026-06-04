@@ -148,23 +148,62 @@ def extract_features_for_student(student_id, label_encoders, feature_cols):
     """
     Extrait les features d'un seul étudiant pour la prédiction.
     """
+    from django.db.models import Avg, Sum, Count, Max, Min
+    from students.models import Student, Assessment, VLEActivity
+
     try:
         s = Student.objects.get(id_student=student_id)
     except Student.DoesNotExist:
-        return None, "Étudiant introuvable"
+        return None, f"Étudiant {student_id} introuvable"
 
     assessments = Assessment.objects.filter(student=s)
     vle         = VLEActivity.objects.filter(student=s)
 
-    avg_score      = assessments.aggregate(v=Avg('score'))['v'] or 0
-    max_score      = assessments.order_by('-score').values_list('score', flat=True).first() or 0
-    min_score      = assessments.order_by('score').values_list('score', flat=True).first() or 0
-    nb_assessments = assessments.count()
-    total_clicks   = vle.aggregate(v=Sum('sum_click'))['v'] or 0
-    nb_vle_types   = vle.values('activity_type').distinct().count()
-    nb_vle_days    = vle.values('date').distinct().count()
+    # ── Features Assessment ──────────────────────────────
+    agg_a = assessments.aggregate(
+        avg_score=Avg('score'),
+        max_score=Max('score'),
+        min_score=Min('score'),
+        count=Count('id'),
+    )
+    avg_score      = agg_a['avg_score'] or 0
+    max_score      = agg_a['max_score'] or 0
+    min_score      = agg_a['min_score'] or 0
+    nb_assessments = agg_a['count'] or 0
+    nb_tma         = assessments.filter(assessment_type='TMA').count()
+    nb_cma         = assessments.filter(assessment_type='CMA').count()
+    nb_exam        = assessments.filter(assessment_type='Exam').count()
 
-    from sklearn.preprocessing import LabelEncoder
+    # Score pondéré
+    weighted_score = 0
+    total_weight   = 0
+    for a in assessments:
+        if a.score is not None and a.weight:
+            weighted_score += a.score * a.weight
+            total_weight   += a.weight
+    weighted_avg = (weighted_score / total_weight) if total_weight > 0 else 0
+
+    # Taux de soumission
+    submitted       = assessments.filter(date_submitted__isnull=False).count()
+    submission_rate = (submitted / nb_assessments) if nb_assessments > 0 else 0
+
+    # ── Features VLE ─────────────────────────────────────
+    agg_v = vle.aggregate(
+        total_clicks=Sum('sum_click'),
+        nb_types=Count('activity_type', distinct=True),
+        nb_days=Count('date', distinct=True),
+    )
+    total_clicks  = agg_v['total_clicks'] or 0
+    nb_vle_types  = agg_v['nb_types'] or 0
+    nb_vle_days   = agg_v['nb_days'] or 0
+    clicks_per_day = (total_clicks / nb_vle_days) if nb_vle_days > 0 else 0
+
+    quiz_clicks  = vle.filter(activity_type='quiz').aggregate(
+        v=Sum('sum_click'))['v'] or 0
+    forum_clicks = vle.filter(activity_type='forumng').aggregate(
+        v=Sum('sum_click'))['v'] or 0
+
+    # ── Encodage catégoriel ───────────────────────────────
     def encode_cat(col, val):
         le = label_encoders.get(col)
         if le is None:
@@ -173,23 +212,38 @@ def extract_features_for_student(student_id, label_encoders, feature_cols):
         return int(le.transform([val])[0]) if val in le.classes_ else -1
 
     record = {
-        'gender':             1 if s.gender == 'M' else 0,
-        'disability':         1 if s.disability == 'Y' else 0,
-        'num_prev_attempts':  s.num_of_prev_attempts,
-        'studied_credits':    s.studied_credits,
-        'age_band':           encode_cat('age_band', s.age_band),
-        'highest_education':  encode_cat('highest_education', s.highest_education),
-        'imd_band':           encode_cat('imd_band', s.imd_band or 'Unknown'),
-        'avg_score':          round(avg_score, 2),
-        'max_score':          round(float(max_score), 2),
-        'min_score':          round(float(min_score), 2),
-        'nb_assessments':     nb_assessments,
-        'nb_tma':             assessments.filter(assessment_type='TMA').count(),
-        'nb_cma':             assessments.filter(assessment_type='CMA').count(),
-        'total_clicks':       total_clicks,
-        'nb_vle_types':       nb_vle_types,
-        'nb_vle_days':        nb_vle_days,
+        'gender':            1 if s.gender == 'M' else 0,
+        'disability':        1 if s.disability == 'Y' else 0,
+        'num_prev_attempts': s.num_of_prev_attempts,
+        'studied_credits':   s.studied_credits,
+        'age_band':          encode_cat('age_band', s.age_band),
+        'highest_education': encode_cat('highest_education', s.highest_education),
+        'imd_band':          encode_cat('imd_band', s.imd_band or 'Unknown'),
+        'avg_score':         round(avg_score, 2),
+        'max_score':         round(float(max_score), 2),
+        'min_score':         round(float(min_score), 2),
+        'weighted_avg':      round(weighted_avg, 2),
+        'nb_assessments':    nb_assessments,
+        'nb_tma':            nb_tma,
+        'nb_cma':            nb_cma,
+        'nb_exam':           nb_exam,
+        'submission_rate':   round(submission_rate, 3),
+        'total_clicks':      total_clicks,
+        'nb_vle_types':      nb_vle_types,
+        'nb_vle_days':       nb_vle_days,
+        'clicks_per_day':    round(clicks_per_day, 2),
+        'quiz_clicks':       quiz_clicks,
+        'forum_clicks':      forum_clicks,
     }
 
-    df_row = pd.DataFrame([record])[feature_cols].fillna(0)
+    import pandas as pd
+    # Utiliser exactement les features du modèle sauvegardé
+    df_row = pd.DataFrame([record])
+
+    # Ajouter les colonnes manquantes avec 0
+    for col in feature_cols:
+        if col not in df_row.columns:
+            df_row[col] = 0
+
+    df_row = df_row[feature_cols].fillna(0)
     return df_row, None
