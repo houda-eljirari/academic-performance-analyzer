@@ -47,73 +47,71 @@ export class Predictions implements OnInit {
   constructor(private api: ApiService) {}
 
   ngOnInit(): void {
-    // Charger d'abord la liste des vrais étudiants depuis Django
-    this.api.get<any>('students/').subscribe({
-      next: (res) => {
-        const list = res.results || res;
-        if (list && list.length > 0) {
-          this.students = list.slice(0, 10).map((s: any) => ({
-            id:         s.id,
-            name:       `Étudiant ${s.id_student}`,
-            initials:   s.gender === 'M' ? 'M' : 'F',
-            filiere:    s.module || s.region || 'OULAD',
-            prediction: '',
-            predClass:  '',
-            confidence: 0,
-            features:   [],
-          }));
-          this.selectedStudentId = this.students[0].id;
-          this.loadShap(this.selectedStudentId);
-        }
-      },
-      error: () => {
-        // Fallback sur données statiques si API indisponible
-        this.students = [
-          {
-            id: 1, name: 'Abdessamad Benhiri', initials: 'AB',
-            filiere: 'Informatique', prediction: 'Succès',
-            predClass: 'success', confidence: 94,
-            features: [
-              { feature: 'Moyenne générale',   value: 16.5, contribution: 2.8,  direction: 'positive' },
-              { feature: 'Note Algorithmique', value: 18,   contribution: 2.1,  direction: 'positive' },
-              { feature: 'Note Mathématiques', value: 17,   contribution: 1.9,  direction: 'positive' },
-              { feature: 'Absences',           value: 2,    contribution: 0.8,  direction: 'positive' },
-              { feature: 'Note BDD',           value: 16,   contribution: 0.6,  direction: 'positive' },
-              { feature: 'Note Anglais',       value: 14,   contribution: -0.3, direction: 'negative' },
-            ]
-          },
-          {
-            id: 2, name: 'Aya Benhadi', initials: 'AB',
-            filiere: 'Gestion', prediction: 'À risque',
-            predClass: 'warning', confidence: 71,
-            features: [
-              { feature: 'Absences',           value: 7,   contribution: -2.4, direction: 'negative' },
-              { feature: 'Note Mathématiques', value: 8,   contribution: -2.1, direction: 'negative' },
-              { feature: 'Moyenne générale',   value: 9.2, contribution: -1.8, direction: 'negative' },
-              { feature: 'Note Algorithmique', value: 9,   contribution: -1.2, direction: 'negative' },
-              { feature: 'Note Anglais',       value: 11,  contribution: 0.4,  direction: 'positive' },
-              { feature: 'Note BDD',           value: 9,   contribution: -0.8, direction: 'negative' },
-            ]
-          },
-          {
-            id: 4, name: 'Ali Jbira', initials: 'AJ',
-            filiere: 'Sciences', prediction: 'Échec',
-            predClass: 'danger', confidence: 82,
-            features: [
-              { feature: 'Moyenne générale',   value: 7.1, contribution: -3.2, direction: 'negative' },
-              { feature: 'Absences',           value: 12,  contribution: -2.8, direction: 'negative' },
-              { feature: 'Note Mathématiques', value: 6,   contribution: -2.5, direction: 'negative' },
-              { feature: 'Note Algorithmique', value: 7,   contribution: -1.9, direction: 'negative' },
-              { feature: 'Note BDD',           value: 6,   contribution: -1.5, direction: 'negative' },
-              { feature: 'Note Anglais',       value: 9,   contribution: 0.2,  direction: 'positive' },
-            ]
-          },
-        ];
+  this.api.get<any>('students/').subscribe({
+    next: (res) => {
+      const list = res.results || res;
+      if (list && list.length > 0) {
+        this.students = list.slice(0, 10).map((s: any) => ({
+          id:         s.id,
+          name:       `Étudiant ${s.id_student}`,
+          initials:   s.gender === 'M' ? 'M' : 'F',
+          filiere:    s.module || s.region || 'OULAD',
+          prediction: '',
+          predClass:  '',
+          confidence: 0,
+          features:   [],
+        }));
         this.selectedStudentId = this.students[0].id;
-        console.log('API indisponible - données statiques utilisées');
+        setTimeout(() => this.loadShap(this.selectedStudentId), 200);
       }
-    });
-  }
+    },
+    error: () => {
+      this.students = [
+        {
+          id: 1, name: 'Abdessamad Benhiri', initials: 'AB',
+          filiere: 'Informatique', prediction: 'Succès',
+          predClass: 'success', confidence: 94,
+          features: [
+            { feature: 'Moyenne générale',   value: 16.5, contribution: 2.8,  direction: 'positive' },
+            { feature: 'Note Algorithmique', value: 18,   contribution: 2.1,  direction: 'positive' },
+            { feature: 'Note Mathématiques', value: 17,   contribution: 1.9,  direction: 'positive' },
+            { feature: 'Absences',           value: 2,    contribution: 0.8,  direction: 'positive' },
+            { feature: 'Note BDD',           value: 16,   contribution: 0.6,  direction: 'positive' },
+            { feature: 'Note Anglais',       value: 14,   contribution: -0.3, direction: 'negative' },
+          ]
+        },
+        {
+          id: 2, name: 'Aya Benhadi', initials: 'AB',
+          filiere: 'Gestion', prediction: 'À risque',
+          predClass: 'warning', confidence: 71,
+          features: [
+            { feature: 'Absences',           value: 7,   contribution: -2.4, direction: 'negative' },
+            { feature: 'Note Mathématiques', value: 8,   contribution: -2.1, direction: 'negative' },
+            { feature: 'Moyenne générale',   value: 9.2, contribution: -1.8, direction: 'negative' },
+            { feature: 'Note Algorithmique', value: 9,   contribution: -1.2, direction: 'negative' },
+            { feature: 'Note Anglais',       value: 11,  contribution: 0.4,  direction: 'positive' },
+            { feature: 'Note BDD',           value: 9,   contribution: -0.8, direction: 'negative' },
+          ]
+        },
+        {
+          id: 4, name: 'Ali Jbira', initials: 'AJ',
+          filiere: 'Sciences', prediction: 'Échec',
+          predClass: 'danger', confidence: 82,
+          features: [
+            { feature: 'Moyenne générale',   value: 7.1, contribution: -3.2, direction: 'negative' },
+            { feature: 'Absences',           value: 12,  contribution: -2.8, direction: 'negative' },
+            { feature: 'Note Mathématiques', value: 6,   contribution: -2.5, direction: 'negative' },
+            { feature: 'Note Algorithmique', value: 7,   contribution: -1.9, direction: 'negative' },
+            { feature: 'Note BDD',           value: 6,   contribution: -1.5, direction: 'negative' },
+            { feature: 'Note Anglais',       value: 9,   contribution: 0.2,  direction: 'positive' },
+          ]
+        },
+      ];
+      this.selectedStudentId = this.students[0].id;
+      console.log('API indisponible - données statiques utilisées');
+    }
+  });
+}
 
   loadShap(studentId: number): void {
     if (!studentId) return;
@@ -153,9 +151,12 @@ export class Predictions implements OnInit {
     return this.students.find(s => s.id === this.selectedStudentId) || this.students[0];
   }
 
-  onStudentChange(id: number): void {
-    this.selectedStudentId = +id;
-    this.loadShap(this.selectedStudentId);
+  onStudentChange(newId: any): void {
+    const id = parseInt(newId, 10);
+    if (!id) return;
+
+    this.selectedStudentId = id;
+    this.loadShap(id);
   }
 
   getBarWidth(contribution: number): string {
