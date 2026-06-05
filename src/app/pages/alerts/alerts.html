@@ -5,34 +5,34 @@
       <h1>Alertes</h1>
       <p>Notifications et alertes en temps réel</p>
     </div>
-    <button class="btn-clear" (click)="clearAll()">🗑️ Tout effacer</button>
+    <button class="btn-clear" (click)="clearAll()">
+      <lucide-icon name="trash-2" [size]="16"></lucide-icon> Tout effacer
+    </button>
   </div>
 
-  <!-- Stat cards -->
   <div class="stats-row">
     <div class="stat-card stat-danger">
-      <div class="stat-icon">🔴</div>
+      <div class="stat-icon"><lucide-icon name="alert-circle"></lucide-icon></div>
       <div class="stat-val">{{ dangerCount }}</div>
       <div class="stat-label">Critiques</div>
     </div>
     <div class="stat-card stat-warning">
-      <div class="stat-icon">🟡</div>
+      <div class="stat-icon"><lucide-icon name="alert-triangle"></lucide-icon></div>
       <div class="stat-val">{{ warningCount }}</div>
       <div class="stat-label">Avertissements</div>
     </div>
     <div class="stat-card stat-info">
-      <div class="stat-icon">🔵</div>
+      <div class="stat-icon"><lucide-icon name="info"></lucide-icon></div>
       <div class="stat-val">{{ infoCount }}</div>
       <div class="stat-label">Informations</div>
     </div>
     <div class="stat-card stat-success">
-      <div class="stat-icon">✅</div>
+      <div class="stat-icon"><lucide-icon name="check-circle"></lucide-icon></div>
       <div class="stat-val">{{ resolvedCount }}</div>
       <div class="stat-label">Résolues</div>
     </div>
   </div>
 
-  <!-- Filtres -->
   <div class="filters-bar">
     <button class="filter-btn" [class.active]="activeFilter === 'all'"
             (click)="setFilter('all')">Toutes</button>
@@ -44,28 +44,33 @@
             (click)="setFilter('info')">Informations</button>
   </div>
 
-  <!-- Liste des alertes -->
   <div class="alerts-list">
     @for (alert of filteredAlerts(); track alert.id) {
       <div class="alert-card" [class]="'alert-' + alert.type">
-        <div class="alert-icon">{{ alert.icon }}</div>
+        <div class="alert-icon">
+          <lucide-icon [name]="alert.icon"></lucide-icon>
+        </div>
         <div class="alert-content">
           <div class="alert-title">{{ alert.title }}</div>
           <div class="alert-message">{{ alert.message }}</div>
           <div class="alert-meta">
-            <span class="alert-student">👤 {{ alert.student }}</span>
-            <span class="alert-time">🕐 {{ alert.time }}</span>
+            <span class="alert-student">
+              <lucide-icon name="user" [size]="14"></lucide-icon> {{ alert.student }}
+            </span>
+            <span class="alert-time">
+              <lucide-icon name="clock" [size]="14"></lucide-icon> {{ alert.time }}
+            </span>
           </div>
         </div>
         <button class="btn-resolve" (click)="resolve(alert.id)">
-          ✓ Résoudre
+          <lucide-icon name="check" [size]="16"></lucide-icon> Résoudre
         </button>
       </div>
     }
 
     @if (filteredAlerts().length === 0) {
       <div class="empty-state">
-        ✅ Aucune alerte — tout va bien !
+        <lucide-icon name="check-circle" [size]="20"></lucide-icon> Aucune alerte — tout va bien !
       </div>
     }
   </div>

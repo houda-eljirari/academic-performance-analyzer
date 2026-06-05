@@ -7,9 +7,10 @@
     </div>
   </div>
 
-  <!-- Format attendu -->
   <div class="format-card">
-    <div class="format-title">📋 Format attendu du fichier CSV</div>
+    <div class="format-title">
+      <lucide-icon name="clipboard-list" [size]="18"></lucide-icon> Format attendu du fichier CSV
+    </div>
     <div class="format-example">
       nom, email, filiere, moyenne<br>
       Abdessamad Benhiri, a.benhiri@univ.ma, Informatique, 16.5<br>
@@ -17,14 +18,15 @@
     </div>
   </div>
 
-  <!-- Zone de drop -->
   @if (!preview.length && !imported) {
     <div class="drop-zone"
          [class.dragging]="isDragging"
          (dragover)="onDragOver($event)"
          (dragleave)="onDragLeave()"
          (drop)="onDrop($event)">
-      <div class="drop-icon">📂</div>
+      <div class="drop-icon">
+        <lucide-icon name="folder-open" [size]="44"></lucide-icon>
+      </div>
       <div class="drop-title">Glissez votre fichier CSV ici</div>
       <div class="drop-sub">ou</div>
       <label class="btn-browse">
@@ -34,27 +36,30 @@
     </div>
   }
 
-  <!-- Erreur -->
   @if (error) {
-    <div class="error-msg">❌ {{ error }}</div>
+    <div class="error-msg">
+      <lucide-icon name="circle-alert" [size]="16"></lucide-icon> {{ error }}
+    </div>
   }
 
-  <!-- Chargement -->
   @if (importing) {
     <div class="loading-card">
-      <div class="spinner"></div>
+      <lucide-icon name="loader-2" class="spinner" [size]="20"></lucide-icon>
       <span>Analyse du fichier en cours...</span>
     </div>
   }
 
-  <!-- Aperçu -->
   @if (preview.length && !imported) {
     <div class="preview-section">
       <div class="preview-header">
         <h2>Aperçu — {{ fileName }}</h2>
         <div class="preview-stats">
-          <span class="stat-valid">✅ {{ validCount }} valides</span>
-          <span class="stat-invalid">❌ {{ invalidCount }} invalides</span>
+          <span class="stat-valid">
+            <lucide-icon name="circle-check" [size]="16"></lucide-icon> {{ validCount }} valides
+          </span>
+          <span class="stat-invalid">
+            <lucide-icon name="circle-x" [size]="16"></lucide-icon> {{ invalidCount }} invalides
+          </span>
         </div>
       </div>
 
@@ -85,9 +90,13 @@
                 </td>
                 <td>
                   @if (s.valid) {
-                    <span class="valid-ok">✅ OK</span>
+                    <span class="valid-ok">
+                      <lucide-icon name="check" [size]="16"></lucide-icon> OK
+                    </span>
                   } @else {
-                    <span class="valid-err">❌ Erreur</span>
+                    <span class="valid-err">
+                      <lucide-icon name="x" [size]="16"></lucide-icon> Erreur
+                    </span>
                   }
                 </td>
               </tr>
@@ -97,21 +106,26 @@
       </div>
 
       <div class="action-row">
-        <button class="btn-cancel" (click)="reset()">Annuler</button>
+        <button class="btn-cancel" (click)="reset()">
+          <lucide-icon name="x" [size]="14"></lucide-icon> Annuler
+        </button>
         <button class="btn-import" (click)="importData()">
-          ⬆️ Importer {{ validCount }} étudiants
+          <lucide-icon name="upload" [size]="16"></lucide-icon> Importer {{ validCount }} étudiants
         </button>
       </div>
     </div>
   }
 
-  <!-- Succès -->
   @if (imported) {
     <div class="success-card">
-      <div class="success-icon">🎉</div>
+      <div class="success-icon">
+        <lucide-icon name="party-popper" [size]="48"></lucide-icon>
+      </div>
       <h2>Import réussi !</h2>
       <p>{{ validCount }} étudiants ont été importés avec succès.</p>
-      <button class="btn-import" (click)="reset()">Importer un autre fichier</button>
+      <button class="btn-import" (click)="reset()">
+        <lucide-icon name="upload" [size]="16"></lucide-icon> Importer un autre fichier
+      </button>
     </div>
   }
 

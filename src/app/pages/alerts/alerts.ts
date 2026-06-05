@@ -1,10 +1,11 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { LucideAngularModule } from 'lucide-angular';
 
 interface Alert {
   id: number;
   type: 'danger' | 'warning' | 'info';
-  icon: string;
+  icon: string; 
   title: string;
   message: string;
   student: string;
@@ -15,7 +16,7 @@ interface Alert {
 @Component({
   selector: 'app-alerts',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, LucideAngularModule],
   templateUrl: './alerts.html',
   styleUrls: ['./alerts.scss']
 })
@@ -24,23 +25,24 @@ export class Alerts {
   activeFilter = 'all';
   resolvedCount = 0;
 
+  // Remis en version standard stable
   alerts: Alert[] = [
-    { id: 1, type: 'danger', icon: '🚨', title: 'Note critique',
+    { id: 1, type: 'danger', icon: 'bell-ring', title: 'Note critique',
       message: 'Note de 4.5/20 en Mathématiques — en dessous du seuil critique',
       student: 'Ali Jbira', time: 'il y a 10 min', resolved: false },
-    { id: 2, type: 'danger', icon: '🚨', title: 'Absences répétées',
+    { id: 2, type: 'danger', icon: 'bell-ring', title: 'Absences répétées',
       message: '5 absences consécutives en Algorithmique ce mois',
       student: 'Aya Benhadi', time: 'il y a 25 min', resolved: false },
-    { id: 3, type: 'warning', icon: '⚠️', title: 'Baisse de moyenne',
+    { id: 3, type: 'warning', icon: 'alert-triangle', title: 'Baisse de moyenne', 
       message: 'Moyenne en baisse de 3.2 points par rapport au semestre précédent',
       student: 'Fatima Zahra Idrissi', time: 'il y a 1h', resolved: false },
-    { id: 4, type: 'warning', icon: '⚠️', title: 'Risque d\'échec prédit',
+    { id: 4, type: 'warning', icon: 'alert-triangle', title: 'Risque d\'échec prédit', 
       message: 'Le modèle IA prédit un risque d\'échec à 68% pour ce semestre',
       student: 'Mehdi Berrada', time: 'il y a 2h', resolved: false },
-    { id: 5, type: 'info', icon: '📋', title: 'Nouveau dossier',
+    { id: 5, type: 'info', icon: 'clipboard-list', title: 'Nouveau dossier',
       message: 'Un nouveau dossier d\'inscription a été soumis pour validation',
       student: 'Omar Chraibi', time: 'il y a 3h', resolved: false },
-    { id: 6, type: 'info', icon: '📊', title: 'Rapport disponible',
+    { id: 6, type: 'info', icon: 'bar-chart-3', title: 'Rapport disponible', 
       message: 'Le rapport de performance du semestre 1 est disponible',
       student: 'Système', time: 'il y a 5h', resolved: false },
   ];

@@ -5,10 +5,11 @@
       <h1>Visualisation SHAP</h1>
       <p>Explication des prédictions par le modèle IA</p>
     </div>
-    <div class="ai-badge">🧠 SHAP Explainability</div>
+    <div class="ai-badge">
+      <lucide-icon name="brain" [size]="18"></lucide-icon> SHAP Explainability
+    </div>
   </div>
 
-  <!-- Sélection étudiant -->
   <div class="student-selector">
     <label>Choisir un étudiant :</label>
     <select [(ngModel)]="selectedStudentId" [ngModel]="selectedStudentId"
@@ -19,7 +20,6 @@
     </select>
   </div>
 
-  <!-- Profil de prédiction -->
   <div class="pred-card">
     <div class="pred-student">
       <div class="student-avatar">{{ selectedStudent.initials }}</div>
@@ -40,13 +40,16 @@
     </div>
   </div>
 
-  <!-- Explication SHAP -->
   <div class="shap-card">
     <h2>Facteurs d'influence</h2>
     <p class="shap-desc">
       Chaque barre montre l'impact d'une variable sur la prédiction.
-      <span class="pos-label">🟢 Positif</span> = favorise le succès ·
-      <span class="neg-label">🔴 Négatif</span> = augmente le risque
+      <span class="pos-label">
+        <lucide-icon name="circle-plus" [size]="14"></lucide-icon> Positif
+      </span> = favorise le succès ·
+      <span class="neg-label">
+        <lucide-icon name="circle-minus" [size]="14"></lucide-icon> Négatif
+      </span> = augmente le risque
     </p>
 
     <div class="shap-list">
@@ -57,10 +60,10 @@
           <div class="shap-bar-wrap">
             @if (f.direction === 'positive') {
               <div class="shap-bar-pos" [style.width]="getBarWidth(f.contribution)">
-              </div>
+                </div>
             } @else {
               <div class="shap-bar-neg" [style.width]="getBarWidth(f.contribution)">
-              </div>
+                </div>
             }
           </div>
           <div class="shap-contribution" [class.pos]="f.direction === 'positive'"
@@ -71,14 +74,13 @@
       }
     </div>
 
-    <!-- Résumé -->
     <div class="shap-summary">
       <div class="summary-item summary-pos">
-        <span>✅ Impact positif total</span>
+        <span><lucide-icon name="circle-check" [size]="16"></lucide-icon> Impact positif total</span>
         <strong>+{{ getTotalPositive().toFixed(1) }}</strong>
       </div>
       <div class="summary-item summary-neg">
-        <span>❌ Impact négatif total</span>
+        <span><lucide-icon name="circle-x" [size]="16"></lucide-icon> Impact négatif total</span>
         <strong>{{ getTotalNegative().toFixed(1) }}</strong>
       </div>
     </div>

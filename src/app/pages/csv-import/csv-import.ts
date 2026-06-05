@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+// 1. Importer le module Lucide
+import { LucideAngularModule } from 'lucide-angular';
 
 interface CsvStudent {
   nom: string;
@@ -14,7 +16,8 @@ interface CsvStudent {
 @Component({
   selector: 'app-csv-import',
   standalone: true,
-  imports: [CommonModule],
+  // 2. Ajouter LucideAngularModule ici
+  imports: [CommonModule, LucideAngularModule],
   templateUrl: './csv-import.html',
   styleUrls: ['./csv-import.scss']
 })
@@ -107,7 +110,6 @@ export class CsvImport {
           this.imported = true;
         },
         error: () => {
-          // Si API pas disponible → simulation locale
           setTimeout(() => {
             this.importing = false;
             this.imported = true;

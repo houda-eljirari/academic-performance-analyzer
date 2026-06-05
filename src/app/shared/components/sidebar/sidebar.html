@@ -4,7 +4,11 @@
       <div class="sidebar__item"
            [class.sidebar__item--active]="isActive(item.route)"
            (click)="navigate(item.route)">
-        <span class="sidebar__item-icon">{{ item.icon }}</span>
+        <lucide-icon 
+          [img]="item.icon" 
+          [size]="20"
+          class="sidebar__item-icon">
+        </lucide-icon>
         <span class="sidebar__item-label">{{ item.label }}</span>
       </div>
     }

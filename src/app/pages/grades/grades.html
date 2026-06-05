@@ -2,24 +2,37 @@
 
   <div class="page-header">
     <div>
-      <h1>Notes</h1>
+      <h1>
+        <lucide-icon [img]="BookOpen" [size]="28" style="margin-right:10px; vertical-align:middle;"></lucide-icon>
+        Notes
+      </h1>
       <p>Saisie et gestion des notes par matière</p>
     </div>
-    <button class="btn-save" (click)="saveGrades()">💾 Enregistrer</button>
+    <button class="btn-save" (click)="saveGrades()">
+      <lucide-icon [img]="Save" [size]="16" style="margin-right:6px; vertical-align:middle;"></lucide-icon>
+      Enregistrer
+    </button>
   </div>
 
   <!-- Filtres -->
   <div class="filters-bar">
-    <select [(ngModel)]="selectedMatiere" class="filter-select">
-      <option value="">Toutes les matières</option>
-      @for (m of matieres; track m) {
-        <option [value]="m">{{ m }}</option>
-      }
-    </select>
-    <select [(ngModel)]="selectedSemestre" class="filter-select">
-      <option value="S1">Semestre 1</option>
-      <option value="S2">Semestre 2</option>
-    </select>
+    <div class="filter-group">
+      <lucide-icon [img]="Filter" [size]="14" style="margin-right:4px; opacity:0.6; vertical-align:middle;"></lucide-icon>
+      <select [(ngModel)]="selectedMatiere" class="filter-select">
+        <option value="">Toutes les matières</option>
+        @for (m of matieres; track m) {
+          <option [value]="m">{{ m }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <lucide-icon [img]="ChevronDown" [size]="14" style="margin-right:4px; opacity:0.6; vertical-align:middle;"></lucide-icon>
+      <select [(ngModel)]="selectedSemestre" class="filter-select">
+        <option value="S1">Semestre 1</option>
+        <option value="S2">Semestre 2</option>
+      </select>
+    </div>
   </div>
 
   <!-- Tableau de saisie -->
@@ -74,7 +87,10 @@
 
   <!-- Message de confirmation -->
   @if (saved) {
-    <div class="save-msg">✅ Notes enregistrées avec succès !</div>
+    <div class="save-msg">
+      <lucide-icon [img]="CheckCircle" [size]="18" style="margin-right:8px; vertical-align:middle; color:#2D6A2D;"></lucide-icon>
+      Notes enregistrées avec succès !
+    </div>
   }
 
 </div>

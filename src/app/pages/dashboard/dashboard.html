@@ -4,35 +4,74 @@
     <p>Academic overview — {{ today | date:'MMMM yyyy' }}</p>
   </div>
 
+  <!-- KPIs principaux -->
   <div class="stats-grid">
     <div class="stat-card stat-card--blue">
-      <div class="stat-card__icon">👥</div>
-      <div class="stat-card__value">{{ stats.totalStudents }}</div>
-      <div class="stat-card__label">Total Students</div>
+      <lucide-icon [img]="Users" [size]="28" class="stat-card__icon"></lucide-icon>
+      <div class="stat-card__value">{{ stats.totalStudents | number }}</div>
+      <div class="stat-card__label">Total Étudiants</div>
     </div>
     <div class="stat-card stat-card--green">
-      <div class="stat-card__icon">📊</div>
-      <div class="stat-card__value">{{ stats.avgGrade }}/20</div>
-      <div class="stat-card__label">Average Grade</div>
+      <lucide-icon [img]="TrendingUp" [size]="28" class="stat-card__icon"></lucide-icon>
+      <div class="stat-card__value">{{ stats.passRate }}%</div>
+      <div class="stat-card__label">Taux de réussite</div>
     </div>
     <div class="stat-card stat-card--red">
-      <div class="stat-card__icon">⚠️</div>
-      <div class="stat-card__value">{{ stats.atRiskStudents }}</div>
-      <div class="stat-card__label">At-Risk Students</div>
+      <lucide-icon [img]="AlertTriangle" [size]="28" class="stat-card__icon"></lucide-icon>
+      <div class="stat-card__value">{{ stats.atRiskStudents | number }}</div>
+      <div class="stat-card__label">Étudiants en échec</div>
     </div>
     <div class="stat-card stat-card--yellow">
-      <div class="stat-card__icon">🔔</div>
-      <div class="stat-card__value">{{ stats.pendingAlerts }}</div>
-      <div class="stat-card__label">Pending Alerts</div>
+      <lucide-icon [img]="UserMinus" [size]="28" class="stat-card__icon"></lucide-icon>
+      <div class="stat-card__value">{{ stats.withdrawnCount | number }}</div>
+      <div class="stat-card__label">Étudiants retirés</div>
     </div>
   </div>
 
+  <!-- KPIs détaillés -->
+  <div class="stats-grid" style="margin-top: 1rem;">
+    <div class="stat-card stat-card--blue">
+      <lucide-icon [img]="Award" [size]="28" class="stat-card__icon"></lucide-icon>
+      <div class="stat-card__value">{{ stats.distinctionCount | number }}</div>
+      <div class="stat-card__label">Distinctions</div>
+    </div>
+    <div class="stat-card stat-card--green">
+      <lucide-icon [img]="CheckCircle" [size]="28" class="stat-card__icon"></lucide-icon>
+      <div class="stat-card__value">{{ stats.passCount | number }}</div>
+      <div class="stat-card__label">Pass</div>
+    </div>
+    <div class="stat-card stat-card--red">
+      <lucide-icon [img]="XCircle" [size]="28" class="stat-card__icon"></lucide-icon>
+      <div class="stat-card__value">{{ stats.failRate }}%</div>
+      <div class="stat-card__label">Taux d'échec</div>
+    </div>
+    <div class="stat-card stat-card--yellow">
+      <lucide-icon [img]="BookOpen" [size]="28" class="stat-card__icon"></lucide-icon>
+      <div class="stat-card__value">{{ stats.avgCredits }}</div>
+      <div class="stat-card__label">Crédits moyens</div>
+    </div>
+  </div>
+
+  <!-- Activité récente -->
   <div class="dashboard__section">
-    <h2>Recent Activity</h2>
+    <h2>
+      <lucide-icon [img]="Activity" [size]="20" style="margin-right:8px; vertical-align:middle;"></lucide-icon>
+      Activité récente
+    </h2>
     <div class="activity-list">
       @for (item of recentActivity; track item.student) {
         <div class="activity-item">
-          <div class="activity-item__dot" [class]="'activity-item__dot--' + item.type"></div>
+          <div class="activity-item__icon">
+            @if (item.type === 'grade') {
+              <lucide-icon [img]="ClipboardList" [size]="16"></lucide-icon>
+            } @else if (item.type === 'alert') {
+              <lucide-icon [img]="AlertCircle" [size]="16"></lucide-icon>
+            } @else if (item.type === 'student') {
+              <lucide-icon [img]="UserPlus" [size]="16"></lucide-icon>
+            } @else {
+              <lucide-icon [img]="BrainCircuit" [size]="16"></lucide-icon>
+            }
+          </div>
           <div class="activity-item__info">
             <strong>{{ item.student }}</strong> — {{ item.action }}
             <span class="activity-item__subject">{{ item.subject }}</span>

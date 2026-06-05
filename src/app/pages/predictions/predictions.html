@@ -5,28 +5,29 @@
       <h1>Prédictions IA</h1>
       <p>Analyse prédictive des performances académiques</p>
     </div>
-    <div class="ai-badge">🤖 Modèle ML actif</div>
+    <div class="ai-badge">
+      <lucide-icon name="bot" [size]="18"></lucide-icon> Modèle ML actif </div>
   </div>
 
   <!-- Stat cards -->
   <div class="stats-row">
     <div class="stat-card stat-success">
-      <div class="stat-icon">🎓</div>
+      <div class="stat-icon"><lucide-icon name="graduation-cap"></lucide-icon></div>
       <div class="stat-val">{{ successCount }}</div>
       <div class="stat-label">Succès prédit</div>
     </div>
     <div class="stat-card stat-warning">
-      <div class="stat-icon">⚠️</div>
+      <div class="stat-icon"><lucide-icon name="triangle-alert"></lucide-icon></div>
       <div class="stat-val">{{ riskCount }}</div>
       <div class="stat-label">À risque</div>
     </div>
     <div class="stat-card stat-danger">
-      <div class="stat-icon">❌</div>
+      <div class="stat-icon"><lucide-icon name="circle-x"></lucide-icon></div>
       <div class="stat-val">{{ failCount }}</div>
       <div class="stat-label">Échec prédit</div>
     </div>
     <div class="stat-card stat-info">
-      <div class="stat-icon">📊</div>
+      <div class="stat-icon"><lucide-icon name="chart-column"></lucide-icon></div>
       <div class="stat-val">{{ accuracy }}%</div>
       <div class="stat-label">Précision du modèle</div>
     </div>

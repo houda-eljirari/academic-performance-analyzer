@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../core/services/api';
+// 1. Importer le module Lucide
+import { LucideAngularModule } from 'lucide-angular';
 
 interface ShapFeature {
   feature: string;
@@ -24,7 +26,8 @@ interface StudentShap {
 @Component({
   selector: 'app-predictions',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  // 2. Ajouter LucideAngularModule aux imports du composant
+  imports: [CommonModule, FormsModule, LucideAngularModule],
   templateUrl: '../shap/shap.html',
   styleUrls: ['../shap/shap.scss']
 })
@@ -49,7 +52,6 @@ export class Predictions implements OnInit {
       next: (res) => {
         const list = res.results || res;
         if (list && list.length > 0) {
-          // Construire la liste depuis la DB
           this.students = list.slice(0, 10).map((s: any) => ({
             id:         s.id,
             name:       `Étudiant ${s.id_student}`,
@@ -60,7 +62,6 @@ export class Predictions implements OnInit {
             confidence: 0,
             features:   [],
           }));
-          // Charger la prédiction du premier étudiant
           this.selectedStudentId = this.students[0].id;
           this.loadShap(this.selectedStudentId);
         }

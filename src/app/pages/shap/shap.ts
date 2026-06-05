@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+// 1. Importer le module Lucide
+import { LucideAngularModule } from 'lucide-angular';
 
 interface ShapFeature {
   feature: string;
@@ -24,7 +26,8 @@ interface StudentShap {
 @Component({
   selector: 'app-shap',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  // 2. Ajouter LucideAngularModule aux imports du composant
+  imports: [CommonModule, FormsModule, LucideAngularModule],
   templateUrl: './shap.html',
   styleUrls: ['./shap.scss']
 })
@@ -107,7 +110,6 @@ export class Shap implements OnInit {
     console.log('API indisponible - données statiques utilisées');
   }
 
-  // ← FONCTION MANQUANTE — c'était le bug
   onStudentChange(newId: any): void {
     const id = parseInt(newId, 10);
     console.log('Changement étudiant → ID:', id);
@@ -116,7 +118,6 @@ export class Shap implements OnInit {
 
     this.selectedStudentId = id;
 
-    // Vérifier si déjà chargé
     const existing = this.students.find(s => s.id === id);
     if (existing && existing.features.length > 0) {
       console.log('Données en cache pour étudiant', id);
