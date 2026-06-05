@@ -16,7 +16,6 @@ import { LucideAngularModule,
 })
 export class DashboardComponent implements OnInit {
 
-  // Icônes Lucide
   readonly Users         = Users;
   readonly TrendingUp    = TrendingUp;
   readonly AlertTriangle = AlertTriangle;
@@ -31,23 +30,22 @@ export class DashboardComponent implements OnInit {
   readonly UserPlus      = UserPlus;
   readonly BrainCircuit  = BrainCircuit;
 
-  today   = new Date();
-  loading = false;
+  today = new Date();
 
   stats = {
     totalStudents:    0,
-    avgGrade:         0,
-    atRiskStudents:   0,
-    pendingAlerts:    0,
     passRate:         0,
     failRate:         0,
     withdrawnRate:    0,
+    atRiskStudents:   0,
+    pendingAlerts:    0,
     distinctionCount: 0,
     passCount:        0,
     failCount:        0,
     withdrawnCount:   0,
     disabledStudents: 0,
     avgCredits:       0,
+    avgGrade:         0,
   };
 
   recentActivity = [
@@ -59,29 +57,30 @@ export class DashboardComponent implements OnInit {
 
   constructor(private api: ApiService) {}
 
-  ngOnInit(): void {
-    fetch('http://localhost:8000/api/analytics/stats/')
-      .then(r => r.json())
-      .then(data => {
-        const dist = data.result_distribution || {};
-        this.stats = {
-          totalStudents:    data.total_students,
-          avgGrade:         data.pass_rate,
-          atRiskStudents:   dist.Fail        || 0,
-          pendingAlerts:    dist.Withdrawn   || 0,
-          passRate:         data.pass_rate,
-          failRate:         data.fail_rate,
-          withdrawnRate:    data.withdrawn_rate,
-          distinctionCount: dist.Distinction || 0,
-          passCount:        dist.Pass        || 0,
-          failCount:        dist.Fail        || 0,
-          withdrawnCount:   dist.Withdrawn   || 0,
-          disabledStudents: data.disabled_students,
-          avgCredits:       data.avg_studied_credits,
-        };
-      })
-      .catch(() => {
-        console.log('API indisponible — données statiques');
-      });
-  }
+ ngOnInit(): void {
+  this.api.get<any>('analytics/stats/').subscribe({
+    next: (data) => {
+      const dist = data.result_distribution || {};
+      // Réassignation complète — force Angular à détecter le changement
+      this.stats = {
+        ...this.stats,
+        totalStudents:    data.total_students    || 0,
+        passRate:         data.pass_rate         || 0,
+        failRate:         data.fail_rate         || 0,
+        withdrawnRate:    data.withdrawn_rate    || 0,
+        atRiskStudents:   dist.Fail              || 0,
+        pendingAlerts:    dist.Withdrawn         || 0,
+        distinctionCount: dist.Distinction       || 0,
+        passCount:        dist.Pass              || 0,
+        failCount:        dist.Fail              || 0,
+        withdrawnCount:   dist.Withdrawn         || 0,
+        disabledStudents: data.disabled_students || 0,
+        avgCredits:       data.avg_studied_credits || 0,
+        avgGrade:         data.pass_rate         || 0,
+      };
+      console.log('Stats mises à jour:', this.stats.totalStudents);
+    },
+    error: (err) => console.error('Erreur:', err)
+  });
+} 
 }

@@ -1,6 +1,7 @@
 # predictions/views.py
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 from rest_framework import serializers
 from .models import Prediction
 from students.models import Student
@@ -16,6 +17,7 @@ class PredictionSerializer(serializers.ModelSerializer):
 
 
 class AllPredictionsView(APIView):
+    permission_classes = [AllowAny]
     """GET /api/predictions/ — toutes les prédictions existantes"""
 
     def get(self, request):
@@ -48,6 +50,7 @@ class AllPredictionsView(APIView):
 
 
 class StudentPredictionDetailView(APIView):
+    permission_classes = [AllowAny]
     """GET /api/predictions/student/<id>/ — prédiction détaillée d'un étudiant"""
 
     def get(self, request, student_id):
@@ -77,6 +80,7 @@ class StudentPredictionDetailView(APIView):
 
 
 class RiskSummaryView(APIView):
+    permission_classes = [AllowAny]
     """GET /api/predictions/risk-summary/ — résumé global des niveaux de risque"""
 
     def get(self, request):
@@ -106,6 +110,7 @@ class RiskSummaryView(APIView):
 from .recommendations import generate_recommendations
 
 class StudentRecommendationsView(APIView):
+    permission_classes = [AllowAny]
     """GET /api/predictions/student/<id>/recommendations/ — recommandations personnalisées"""
 
     def get(self, request, student_id):

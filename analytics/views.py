@@ -1,6 +1,7 @@
 # analytics/views.py
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 from django.db.models import Avg, Count, Sum, Q, FloatField
 from django.db.models.functions import Cast
 import pandas as pd
@@ -9,6 +10,7 @@ from students.models import Student, Assessment, VLEActivity, Module
 
 
 class GlobalStatsView(APIView):
+    permission_classes = [AllowAny]
     """GET /api/analytics/stats/ — statistiques globales"""
 
     def get(self, request):
