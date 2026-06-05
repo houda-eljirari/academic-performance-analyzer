@@ -34,10 +34,8 @@ export class Shap implements OnInit {
 
   selectedStudentId = 0;
   loading = false;
-
   students: StudentShap[] = [];
 
-  // Données statiques de fallback
   private fallbackStudents: StudentShap[] = [
     {
       id: 1, name: 'Abdessamad Benhiri', initials: 'AB',
@@ -78,7 +76,6 @@ export class Shap implements OnInit {
   ];
 
   ngOnInit(): void {
-    // Charger les vrais étudiants depuis Django
     this.http.get<any>('http://localhost:8000/api/students/')
       .subscribe({
         next: (res) => {
@@ -110,11 +107,32 @@ export class Shap implements OnInit {
     console.log('API indisponible - données statiques utilisées');
   }
 
+  // ← FONCTION MANQUANTE — c'était le bug
+  onStudentChange(newId: any): void {
+    const id = parseInt(newId, 10);
+    console.log('Changement étudiant → ID:', id);
+
+    if (!id || id === this.selectedStudentId) return;
+
+    this.selectedStudentId = id;
+
+    // Vérifier si déjà chargé
+    const existing = this.students.find(s => s.id === id);
+    if (existing && existing.features.length > 0) {
+      console.log('Données en cache pour étudiant', id);
+      return;
+    }
+
+    this.loadShap(id);
+  }
+
   loadShap(studentId: number): void {
     if (!studentId) return;
     this.loading = true;
 
-    this.http.post<any>(`http://localhost:8000/api/ml/predict/pk/${studentId}/`, {}).subscribe({
+    this.http.post<any>(
+      `http://localhost:8000/api/ml/predict/pk/${studentId}/`, {}
+    ).subscribe({
       next: (response: any) => {
         console.log('Réponse Django:', response);
         const shapValues = response.shap_values || {};
