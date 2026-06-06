@@ -239,4 +239,67 @@ class StudentProfileView(APIView):
                 'by_activity_type':  activity_by_type,
             },
         })
-        
+class AlertsView(APIView):
+    """GET /api/analytics/alerts/ — alertes réelles depuis la DB"""
+
+    def get(self, request):
+        from students.models import Student
+        from predictions.models import Prediction
+
+        alerts = []
+
+        # Alertes HIGH risk depuis les prédictions
+        high_risk = Prediction.objects.filter(
+            risk_level='HIGH'
+        ).select_related('student').order_by('probability')[:5]
+
+        for p in high_risk:
+            alerts.append({
+                'type':        'critique',
+                'title':       "Risque d'échec élevé",
+                'description': f"Le modèle IA prédit un risque d'échec de {round((1 - p.probability) * 100)}% pour ce semestre.",
+                'student':     f'Étudiant {p.student.id_student}',
+                'time':        'Prédit par XGBoost',
+                'icon':        'alert',
+                'resolved':    False,
+            })
+
+        # Alertes tentatives multiples
+        multi = Student.objects.filter(
+            num_of_prev_attempts__gte=2
+        ).order_by('-num_of_prev_attempts')[:3]
+
+        for s in multi:
+            alerts.append({
+                'type':        'avertissement',
+                'title':       'Tentatives multiples',
+                'description': f'{s.num_of_prev_attempts} tentatives précédentes enregistrées.',
+                'student':     f'Étudiant {s.id_student}',
+                'time':        'Données OULAD',
+                'icon':        'warning',
+                'resolved':    False,
+            })
+
+        # Alertes étudiants retirés
+        withdrawn = Student.objects.filter(
+            final_result='Withdrawn'
+        )[:3]
+
+        for s in withdrawn:
+            alerts.append({
+                'type':        'information',
+                'title':       'Étudiant retiré du module',
+                'description': f'Retiré du module {s.module} — région {s.region}.',
+                'student':     f'Étudiant {s.id_student}',
+                'time':        'Données OULAD',
+                'icon':        'info',
+                'resolved':    False,
+            })
+
+        return Response({
+            'total':          len(alerts),
+            'critiques':      len([a for a in alerts if a['type'] == 'critique']),
+            'avertissements': len([a for a in alerts if a['type'] == 'avertissement']),
+            'informations':   len([a for a in alerts if a['type'] == 'information']),
+            'alerts':         alerts,
+        })

@@ -45,7 +45,7 @@
   </div>
 
   <div class="alerts-list">
-    @for (alert of filteredAlerts(); track alert.id) {
+    @for (alert of filteredAlerts; track alert.id) {
       <div class="alert-card" [class]="'alert-' + alert.type">
         <div class="alert-icon">
           <lucide-icon [name]="alert.icon"></lucide-icon>
@@ -68,7 +68,7 @@
       </div>
     }
 
-    @if (filteredAlerts().length === 0) {
+    @if (filteredAlerts.length === 0) {
       <div class="empty-state">
         <lucide-icon name="check-circle" [size]="20"></lucide-icon> Aucune alerte — tout va bien !
       </div>
