@@ -6,84 +6,94 @@
       <p>Explication des prédictions par le modèle IA</p>
     </div>
     <div class="ai-badge">
-      <lucide-icon name="brain" [size]="18"></lucide-icon> SHAP Explainability
+      <lucide-icon name="brain" [size]="18" style="margin-right: 6px; vertical-align: middle;"></lucide-icon> SHAP Explainability
     </div>
   </div>
 
   <div class="student-selector">
     <label>Choisir un étudiant :</label>
     <select [ngModel]="selectedStudentId"
-          (ngModelChange)="onStudentChange($event)">
+        (ngModelChange)="onStudentChange($event)">
       @for (s of students; track s.id) {
         <option [value]="s.id">{{ s.name }}</option>
       }
     </select>
+    
   </div>
 
-  <div class="pred-card">
-    <div class="pred-student">
-      <div class="student-avatar">{{ selectedStudent.initials }}</div>
-      <div>
-        <div class="student-name">{{ selectedStudent.name }}</div>
-        <div class="student-filiere">{{ selectedStudent.filiere }}</div>
+  @if (selectedStudent) {
+    <div class="pred-card">
+      <div class="pred-student">
+        <div class="student-avatar" [class.avatar-f]="selectedStudent.initials === 'F'">
+          {{ selectedStudent.initials }}
+        </div>
+        <div>
+          <div class="student-name">{{ selectedStudent.name }}</div>
+          <div class="student-filiere">{{ selectedStudent.filiere }}</div>
+        </div>
+      </div>
+      <div class="pred-result">
+        <div class="pred-label">Résultat prédit</div>
+        <span class="pred-badge" [class]="'pred-' + selectedStudent.predClass">
+          {{ selectedStudent.prediction }}
+        </span>
+      </div>
+      <div class="pred-confidence">
+        <div class="pred-label">Confiance</div>
+        <div class="confidence-val">{{ selectedStudent.confidence }}%</div>
       </div>
     </div>
-    <div class="pred-result">
-      <div class="pred-label">Résultat prédit</div>
-      <span class="pred-badge" [class]="'pred-' + selectedStudent.predClass">
-        {{ selectedStudent.prediction }}
-      </span>
-    </div>
-    <div class="pred-confidence">
-      <div class="pred-label">Confiance</div>
-      <div class="confidence-val">{{ selectedStudent.confidence }}%</div>
-    </div>
-  </div>
 
-  <div class="shap-card">
-    <h2>Facteurs d'influence</h2>
-    <p class="shap-desc">
-      Chaque barre montre l'impact d'une variable sur la prédiction.
-      <span class="pos-label">
-        <lucide-icon name="circle-plus" [size]="14"></lucide-icon> Positif
-      </span> = favorise le succès ·
-      <span class="neg-label">
-        <lucide-icon name="circle-minus" [size]="14"></lucide-icon> Négatif
-      </span> = augmente le risque
-    </p>
+    <div class="shap-card">
+      <h2>Facteurs d'influence</h2>
+      <p class="shap-desc">
+        Chaque barre montre l'impact d'une variable sur la prédiction.
+        <span class="pos-label">
+          <lucide-icon name="circle-plus" [size]="14" style="vertical-align: middle;"></lucide-icon> Positif
+        </span> = favorise le succès ·
+        <span class="neg-label">
+          <lucide-icon name="circle-minus" [size]="14" style="vertical-align: middle;"></lucide-icon> Négatif
+        </span> = augmente le risque
+      </p>
 
-    <div class="shap-list">
-      @for (f of selectedStudent.features; track f.feature) {
-        <div class="shap-row">
-          <div class="shap-feature">{{ f.feature }}</div>
-          <div class="shap-value-box">{{ f.value }}</div>
-          <div class="shap-bar-wrap">
-            @if (f.direction === 'positive') {
-              <div class="shap-bar-pos" [style.width]="getBarWidth(f.contribution)">
-                </div>
-            } @else {
-              <div class="shap-bar-neg" [style.width]="getBarWidth(f.contribution)">
-                </div>
-            }
+      @if (loading) {
+        <div class="loader-inner">
+          <lucide-icon name="loader-2" class="spin-icon" [size]="24"></lucide-icon>
+          <p>Mise à jour de la matrice SHAP...</p>
+        </div>
+      } @else {
+        <div class="shap-list">
+          @for (f of selectedStudent.features; track f.feature) {
+            <div class="shap-row">
+              <div class="shap-feature">{{ f.feature }}</div>
+              <div class="shap-value-box">{{ f.value !== 0 ? f.value : '—' }}</div>
+              <div class="shap-bar-wrap">
+                @if (f.direction === 'positive') {
+                  <div class="shap-bar-pos" [style.width]="getBarWidth(f.contribution)"></div>
+                } @else {
+                  <div class="shap-bar-neg" [style.width]="getBarWidth(f.contribution)"></div>
+                }
+              </div>
+              <div class="shap-contribution" [class.pos]="f.direction === 'positive'" [class.neg]="f.direction === 'negative'">
+                {{ f.contribution > 0 ? '+' : '' }}{{ f.contribution.toFixed(2) }}
+              </div>
+            </div>
+          } @empty {
+            <div class="empty-features">Aucune donnée SHAP générée pour cet étudiant.</div>
+          }
+        </div>
+
+        <div class="shap-summary">
+          <div class="summary-item summary-pos">
+            <span><lucide-icon name="circle-check" [size]="16" style="margin-right:6px; vertical-align:middle;"></lucide-icon> Impact positif total</span>
+            <strong>+{{ getTotalPositive().toFixed(2) }}</strong>
           </div>
-          <div class="shap-contribution" [class.pos]="f.direction === 'positive'"
-               [class.neg]="f.direction === 'negative'">
-            {{ f.contribution > 0 ? '+' : '' }}{{ f.contribution }}
+          <div class="summary-item summary-neg">
+            <span><lucide-icon name="circle-x" [size]="16" style="margin-right:6px; vertical-align:middle;"></lucide-icon> Impact négatif total</span>
+            <strong>{{ getTotalNegative().toFixed(2) }}</strong>
           </div>
         </div>
       }
     </div>
-
-    <div class="shap-summary">
-      <div class="summary-item summary-pos">
-        <span><lucide-icon name="circle-check" [size]="16"></lucide-icon> Impact positif total</span>
-        <strong>+{{ getTotalPositive().toFixed(1) }}</strong>
-      </div>
-      <div class="summary-item summary-neg">
-        <span><lucide-icon name="circle-x" [size]="16"></lucide-icon> Impact négatif total</span>
-        <strong>{{ getTotalNegative().toFixed(1) }}</strong>
-      </div>
-    </div>
-  </div>
-
+  }
 </div>

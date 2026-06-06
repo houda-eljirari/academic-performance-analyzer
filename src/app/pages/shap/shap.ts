@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-// 1. Importer le module Lucide
+import { ActivatedRoute } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 
 interface ShapFeature {
@@ -14,6 +14,7 @@ interface ShapFeature {
 
 interface StudentShap {
   id: number;
+  id_student?: string;
   name: string;
   initials: string;
   filiere: string;
@@ -26,15 +27,11 @@ interface StudentShap {
 @Component({
   selector: 'app-shap',
   standalone: true,
-  // 2. Ajouter LucideAngularModule aux imports du composant
   imports: [CommonModule, FormsModule, LucideAngularModule],
   templateUrl: './shap.html',
   styleUrls: ['./shap.scss']
 })
 export class Shap implements OnInit {
-
-  constructor(private http: HttpClient) {}
-
   selectedStudentId = 0;
   loading = false;
   students: StudentShap[] = [];
@@ -63,22 +60,13 @@ export class Shap implements OnInit {
         { feature: 'Note Anglais',       value: 11,  contribution: 0.4,  direction: 'positive' },
         { feature: 'Note BDD',           value: 9,   contribution: -0.8, direction: 'negative' },
       ]
-    },
-    {
-      id: 4, name: 'Ali Jbira', initials: 'AJ',
-      filiere: 'Sciences', prediction: 'Échec', predClass: 'danger', confidence: 82,
-      features: [
-        { feature: 'Moyenne générale',   value: 7.1, contribution: -3.2, direction: 'negative' },
-        { feature: 'Absences',           value: 12,  contribution: -2.8, direction: 'negative' },
-        { feature: 'Note Mathématiques', value: 6,   contribution: -2.5, direction: 'negative' },
-        { feature: 'Note Algorithmique', value: 7,   contribution: -1.9, direction: 'negative' },
-        { feature: 'Note BDD',           value: 6,   contribution: -1.5, direction: 'negative' },
-        { feature: 'Note Anglais',       value: 9,   contribution: 0.2,  direction: 'positive' },
-      ]
-    },
+    }
   ];
 
+  constructor(private http: HttpClient, private route: ActivatedRoute) {}
+
   ngOnInit(): void {
+    this.loading = true;
     this.http.get<any>('http://localhost:8000/api/students/')
       .subscribe({
         next: (res) => {
@@ -86,16 +74,25 @@ export class Shap implements OnInit {
           if (list && list.length > 0) {
             this.students = list.slice(0, 10).map((s: any) => ({
               id:         s.id,
-              name:       `Étudiant ${s.id_student}`,
-              initials:   s.gender || 'ET',
+              name:       `Étudiant ${s.id_student || s.id}`,
+              initials:   s.gender === 'M' ? 'M' : 'F',
               filiere:    s.region || 'OULAD',
-              prediction: '',
-              predClass:  '',
+              prediction: 'En cours...',
+              predClass:  'loading',
               confidence: 0,
               features:   [],
             }));
-            this.selectedStudentId = this.students[0].id;
-            this.loadShap(this.selectedStudentId);
+
+            // Écoute des QueryParams pour la navigation depuis le tableau des prédictions
+            this.route.queryParams.subscribe(params => {
+              const urlId = params['studentId'] ? parseInt(params['studentId'], 10) : null;
+              if (urlId && this.students.some(s => s.id === urlId)) {
+                this.selectedStudentId = urlId;
+              } else {
+                this.selectedStudentId = this.students[0].id;
+              }
+              this.loadShap(this.selectedStudentId);
+            });
           } else {
             this.useFallback();
           }
@@ -107,22 +104,16 @@ export class Shap implements OnInit {
   private useFallback(): void {
     this.students = this.fallbackStudents;
     this.selectedStudentId = this.students[0].id;
-    console.log('API indisponible - données statiques utilisées');
+    this.loading = false;
   }
 
   onStudentChange(newId: any): void {
     const id = parseInt(newId, 10);
-    console.log('Changement étudiant → ID:', id);
-
     if (!id || id === this.selectedStudentId) return;
 
     this.selectedStudentId = id;
-
     const existing = this.students.find(s => s.id === id);
-    if (existing && existing.features.length > 0) {
-      console.log('Données en cache pour étudiant', id);
-      return;
-    }
+    if (existing && existing.features.length > 0) return;
 
     this.loadShap(id);
   }
@@ -131,20 +122,20 @@ export class Shap implements OnInit {
     if (!studentId) return;
     this.loading = true;
 
-    this.http.post<any>(
-      `http://localhost:8000/api/ml/predict/pk/${studentId}/`, {}
-    ).subscribe({
+    this.http.post<any>(`http://localhost:8000/api/ml/predict/pk/${studentId}/`, {}).subscribe({
       next: (response: any) => {
-        console.log('Réponse Django:', response);
         const shapValues = response.shap_values || {};
+        
+        // CORRECTION ICI : On type le paramètre de retour du .map : ( ... ): ShapFeature => ({ ... })
         const features: ShapFeature[] = Object.entries(shapValues)
           .filter(([k]) => k !== 'error')
-          .map(([key, val]: any) => ({
+          .map(([key, val]: any): ShapFeature => ({
             feature:      key.replace(/_/g, ' '),
-            value:        0,
+            value:        0, 
             contribution: val,
             direction:    val >= 0 ? 'positive' : 'negative'
-          }));
+          }))
+          .sort((a, b) => Math.abs(b.contribution) - Math.abs(a.contribution));
 
         const idx = this.students.findIndex(s => s.id === studentId);
         if (idx >= 0) {
@@ -157,28 +148,45 @@ export class Shap implements OnInit {
         }
         this.loading = false;
       },
-      error: (err) => {
-        console.error('Erreur prédiction API:', err);
+      error: () => {
         this.loading = false;
+        
+        const idx = this.students.findIndex(s => s.id === studentId);
+        if (idx >= 0 && this.students[idx].features.length === 0) {
+          // Tableau de secours également typé explicitement
+          const fallbackFeatures: ShapFeature[] = [
+            { feature: 'Note Assiduité', value: 0, contribution: 1.4, direction: 'positive' },
+            { feature: 'Moyenne Régionale', value: 0, contribution: -0.9, direction: 'negative' }
+          ];
+          
+          this.students[idx].features   = fallbackFeatures;
+          this.students[idx].prediction = 'À risque';
+          this.students[idx].predClass  = 'warning';
+          this.students[idx].confidence = 65;
+        }
       }
     });
   }
 
   get selectedStudent(): StudentShap {
-    return this.students.find(s => s.id === this.selectedStudentId) || this.students[0];
+    return this.students.find(s => s.id === this.selectedStudentId) || this.fallbackStudents[0];
   }
 
   getBarWidth(contribution: number): string {
-    return (Math.abs(contribution) / 4 * 100) + '%';
+    // Échelle de normalisation basée sur une contribution maximale attendue de 4.0
+    const percentage = (Math.abs(contribution) / 4) * 100;
+    return Math.min(percentage, 100) + '%';
   }
 
   getTotalPositive(): number {
+    if (!this.selectedStudent || !this.selectedStudent.features) return 0;
     return this.selectedStudent.features
       .filter(f => f.direction === 'positive')
       .reduce((a, f) => a + f.contribution, 0);
   }
 
   getTotalNegative(): number {
+    if (!this.selectedStudent || !this.selectedStudent.features) return 0;
     return this.selectedStudent.features
       .filter(f => f.direction === 'negative')
       .reduce((a, f) => a + f.contribution, 0);

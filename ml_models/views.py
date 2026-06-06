@@ -1,11 +1,13 @@
 # ml_models/views.py
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 from .train import train_and_save
 from .predictor import predict_student, get_model_info
 
 
 class TrainModelView(APIView):
+    permission_classes = [AllowAny]
     """POST /api/ml/train/ — lance l'entraînement du modèle"""
 
     def post(self, request):
@@ -19,6 +21,7 @@ class TrainModelView(APIView):
 
 
 class PredictStudentView(APIView):
+    permission_classes = [AllowAny]
     """POST /api/ml/predict/<student_id>/ — prédit le résultat d'un étudiant"""
 
     def post(self, request, student_id):
@@ -46,6 +49,7 @@ class PredictStudentView(APIView):
 
 
 class ModelInfoView(APIView):
+    permission_classes = [AllowAny]
     """GET /api/ml/info/ — infos sur le modèle chargé"""
 
     def get(self, request):
@@ -53,6 +57,7 @@ class ModelInfoView(APIView):
 
 
 class BulkPredictView(APIView):
+    permission_classes = [AllowAny]
     """POST /api/ml/predict-all/ — prédit tous les étudiants sans prédiction"""
 
     def post(self, request):
@@ -83,6 +88,7 @@ class BulkPredictView(APIView):
         return Response(results)
     
 class PredictByPkView(APIView):
+    permission_classes = [AllowAny]
     """POST /api/ml/predict/pk/<pk>/ — prédit par clé primaire Django"""
 
     def post(self, request, pk):

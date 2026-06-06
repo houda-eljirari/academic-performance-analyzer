@@ -1,87 +1,139 @@
 <div class="predictions-page">
-
   <div class="page-header">
     <div>
-      <h1>Prédictions IA</h1>
-      <p>Analyse prédictive des performances académiques</p>
+      <h1>
+        <lucide-icon [img]="BrainCircuit" [size]="28" style="margin-right:10px; vertical-align:middle;"></lucide-icon>
+        Prédictions académiques
+      </h1>
+      <p>Analyse prédiction des performances académique</p>
     </div>
     <div class="ai-badge">
-      <lucide-icon name="bot" [size]="18"></lucide-icon> Modèle ML actif </div>
-  </div>
-
-  <!-- Stat cards -->
-  <div class="stats-row">
-    <div class="stat-card stat-success">
-      <div class="stat-icon"><lucide-icon name="graduation-cap"></lucide-icon></div>
-      <div class="stat-val">{{ successCount }}</div>
-      <div class="stat-label">Succès prédit</div>
-    </div>
-    <div class="stat-card stat-warning">
-      <div class="stat-icon"><lucide-icon name="triangle-alert"></lucide-icon></div>
-      <div class="stat-val">{{ riskCount }}</div>
-      <div class="stat-label">À risque</div>
-    </div>
-    <div class="stat-card stat-danger">
-      <div class="stat-icon"><lucide-icon name="circle-x"></lucide-icon></div>
-      <div class="stat-val">{{ failCount }}</div>
-      <div class="stat-label">Échec prédit</div>
-    </div>
-    <div class="stat-card stat-info">
-      <div class="stat-icon"><lucide-icon name="chart-column"></lucide-icon></div>
-      <div class="stat-val">{{ accuracy }}%</div>
-      <div class="stat-label">Précision du modèle</div>
+      <lucide-icon [img]="Sparkles" [size]="16" style="margin-right:6px; vertical-align:middle;"></lucide-icon>
+      Modèle ML actif
     </div>
   </div>
 
-  <!-- Liste des prédictions -->
+  <div class="pred-stats">
+    <div class="pred-stat pred-stat--green">
+      <lucide-icon [img]="TrendingUp" [size]="22"></lucide-icon>
+      <div>
+        <div class="pred-stat__val">89.06%</div>
+        <div class="pred-stat__label">Accuracy</div>
+      </div>
+    </div>
+    <div class="pred-stat pred-stat--blue">
+      <lucide-icon [img]="CheckCircle" [size]="22"></lucide-icon>
+      <div>
+        <div class="pred-stat__val">0.8903</div>
+        <div class="pred-stat__label">F1-Score</div>
+      </div>
+    </div>
+    <div class="pred-stat pred-stat--amber">
+      <lucide-icon [img]="Users" [size]="22"></lucide-icon>
+      <div>
+        <div class="pred-stat__val">{{ students.length }}</div>
+        <div class="pred-stat__label">Étudiants analysés</div>
+      </div>
+    </div>
+    <div class="pred-stat pred-stat--red">
+      <lucide-icon [img]="AlertTriangle" [size]="22"></lucide-icon>
+      <div>
+        <div class="pred-stat__val">{{ highRiskCount }}</div>
+        <div class="pred-stat__label">Risque élevé</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="filters-bar">
+    <button class="filter-btn" [class.active]="riskFilter === 'all'" (click)="riskFilter = 'all'">
+      Tous
+    </button>
+    <button class="filter-btn filter-btn--green" [class.active]="riskFilter === 'success'" (click)="riskFilter = 'success'">
+      Succès
+    </button>
+    <button class="filter-btn filter-btn--red" [class.active]="riskFilter === 'danger'" (click)="riskFilter = 'danger'">
+      Échec
+    </button>
+  </div>
+
   <div class="table-card">
-    <div class="table-header">
-      <h2>Prédictions par étudiant</h2>
-      <button class="btn-refresh" (click)="refresh()">🔄 Actualiser</button>
-    </div>
     <table class="pred-table">
       <thead>
         <tr>
           <th>Étudiant</th>
-          <th>Filière</th>
-          <th>Moyenne actuelle</th>
+          <th>Région</th>
           <th>Résultat prédit</th>
+          <th>Probabilité</th>
+          <th>Niveau de risque</th>
           <th>Confiance</th>
-          <th>Recommandation</th>
+          <th style="text-align: right;">Action</th>
         </tr>
       </thead>
       <tbody>
-        @for (p of predictions; track p.studentId) {
+        @for (s of filteredStudents; track s.id) {
           <tr>
             <td class="td-student">
-              <div class="student-avatar">{{ p.initials }}</div>
-              <span>{{ p.name }}</span>
-            </td>
-            <td><span class="filiere-badge">{{ p.filiere }}</span></td>
-            <td>
-              <span class="avg-val" [class.avg-low]="p.currentAvg < 10">
-                {{ p.currentAvg }}/20
-              </span>
-            </td>
-            <td>
-              <span class="pred-badge" [class]="'pred-' + p.predClass">
-                {{ p.prediction }}
-              </span>
-            </td>
-            <td>
-              <div class="confidence-bar">
-                <div class="confidence-fill"
-                     [class]="'fill-' + p.predClass"
-                     [style.width]="p.confidence + '%'">
-                </div>
+              <div class="student-avatar" [class.avatar-f]="s.initials === 'F'">{{ s.initials }}</div>
+              <div>
+                <div class="student-name">{{ s.name }}</div>
+                <div class="student-sub">{{ s.filiere }}</div>
               </div>
-              <span class="confidence-val">{{ p.confidence }}%</span>
             </td>
-            <td class="td-reco">{{ p.recommendation }}</td>
+            <td class="td-region">{{ s.region }}</td>
+            <td>
+              @if (s.prediction) {
+                <span class="pred-badge" [class]="'pred-' + s.predClass">
+                  {{ s.prediction }}
+                </span>
+              } @else {
+                <span class="pred-badge pred-loading">En cours...</span>
+              }
+            </td>
+            <td>
+              @if (s.confidence > 0) {
+                <div class="prob-bar-wrap">
+                  <div class="prob-container">
+                    <div class="prob-bar" [style.width.%]="s.confidence" [class]="s.predClass === 'success' ? 'prob-bar--green' : 'prob-bar--red'"></div>
+                  </div>
+                  <span class="prob-val">{{ s.confidence }}%</span>
+                </div>
+              } @else {
+                <span class="muted-dash">—</span>
+              }
+            </td>
+            <td>
+              @if (s.riskLevel) {
+                <span class="risk-badge" [class]="'risk-' + s.riskLevel.toLowerCase()">
+                  {{ s.riskLevel }}
+                </span>
+              } @else {
+                <span class="muted-dash">—</span>
+              }
+            </td>
+            <td>
+              @if (s.confidence > 0) {
+                <span class="confidence-text" [class]="s.confidence >= 75 ? 'conf-high' : s.confidence >= 50 ? 'conf-med' : 'conf-low'">
+                  {{ s.confidence >= 75 ? 'Élevée' : s.confidence >= 50 ? 'Modérée' : 'Faible' }}
+                </span>
+              } @else {
+                <span class="muted-dash">—</span>
+              }
+            </td>
+            <td style="text-align: right;">
+              <button class="btn-shap" (click)="viewShap(s.id)">
+                <lucide-icon name="sparkles" [size]="14"></lucide-icon> # SHAP
+            </button>
+            </td>
           </tr>
         }
       </tbody>
     </table>
   </div>
 
+  @if (loading) {
+    <div class="loading-msg">
+      <lucide-icon [img]="Loader2" [size]="18" style="margin-right:8px; animation: spin 1s linear infinite;"></lucide-icon>
+      Chargement des prédictions...
+    </div>
+  }
 </div>
