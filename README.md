@@ -26,13 +26,14 @@ Téléchargez le dataset sur Kaggle : [Open University Learning Analytics Datase
 
 Fichiers utilisés :
 
-| Fichier | Contenu | Utilisation |
-|---|---|---|
-| studentInfo.csv | Données démographiques (32 593 étudiants) | Import principal |
-| studentAssessment.csv | Scores aux évaluations (173 912 entrées) | Features ML |
-| studentVle.csv | Activité plateforme VLE | Engagement étudiant |
+| Fichier | Contenu | 
+|---|---|
+| studentInfo.csv | Données démographiques (32 593 étudiants) | 
+| studentAssessment.csv | Scores aux évaluations (173 912 entrées) |
+| studentVle.csv | Activité plateforme VLE | 
 
 ---
+
 ## Installation et lancement local
 
 ### Prérequis
@@ -194,7 +195,7 @@ ng serve --port 4300
 
 ## Architecture technique
 
-``` bash
+``` 
 academic-performance-analyzer/
 ├── config/                  Django — configuration, settings, urls
 ├── students/                Modèles OULAD, CRUD, import CSV
@@ -234,9 +235,9 @@ academic-performance-analyzer/
 
 ### Équipe
 
-| Membre | Rôle | Responsabilités |
-|---|---|---|
-| EL JIRARI Houda | Backend et Intelligence Artificielle | Django REST API, Pipeline ML, SHAP, Import OULAD |
-| EL BARNAOUI Maroua | Frontend et Visualisations | Angular, Dashboard, Visualisation SHAP |
+| Membre | Rôle | 
+|---|---|
+| EL JIRARI Houda | Backend et Intelligence Artificielle | 
+| EL BARNAOUI Maroua | Frontend et Visualisations |
 
 
