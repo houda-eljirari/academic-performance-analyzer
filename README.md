@@ -1,16 +1,50 @@
-# academic-performance-analyzer
-# Academic Performance Analyzer
+# AcademiX : Academic Performance Analyzer
 
-Application web intelligente d'analyse de performance académique développée dans le cadre du module **SDIA — Systèmes Distribués et Intelligence Artificielle** (Projet Technologies Web).
+Application web intelligente d'analyse de performance académique développée dans le cadre du module **Technologies du Web et Web Sémantique** Filiére **SDIA — Systèmes Distribués et Intelligence Artificielle** 
+## Présentation
 
-> **Dataset utilisé :** [OULAD — Open University Learning Analytics Dataset](https://analyse.kmi.open.ac.uk/open_dataset)
+AcademiX est une plateforme web full-stack dédiée à l'analyse et à la prédiction des performances académiques des étudiants à partir du dataset **OULAD** (Open University Learning Analytics Dataset). Elle combine des visualisations analytiques interactives, un modèle de Machine Learning XGBoost et une explicabilité SHAP pour identifier les étudiants à risque et générer des recommandations personnalisées.
 
 ---
 
+## Fonctionnalités
 
-# Installation et Exécution du Projet
+- Import et gestion des données CSV (dataset OULAD)
+- Tableau de bord analytique connecté aux données réelles (28 785 étudiants)
+- Consultation et recherche des profils étudiants
+- Gestion des notes avec calcul automatique des moyennes
+- Prédiction réussite/échec via modèle XGBoost (accuracy 89.06%)
+- Visualisation SHAP des facteurs d'influence par étudiant
+- Détection automatique des étudiants à risque (LOW / MEDIUM / HIGH)
+- Centre d'alertes connecté aux vraies données OULAD
 
-## 1. Cloner le dépôt
+---
+
+## Dataset OULAD
+
+Téléchargez le dataset sur Kaggle : [Open University Learning Analytics Dataset](https://www.kaggle.com/code/vjcalling/oulad-open-university-learning-analytics-dataset)
+
+Fichiers utilisés :
+
+| Fichier | Contenu | Utilisation |
+|---|---|---|
+| studentInfo.csv | Données démographiques (32 593 étudiants) | Import principal |
+| studentAssessment.csv | Scores aux évaluations (173 912 entrées) | Features ML |
+| studentVle.csv | Activité plateforme VLE | Engagement étudiant |
+
+---
+## Installation et lancement local
+
+### Prérequis
+
+- Python 3.11 ou supérieur
+- Node.js 18 ou supérieur
+- npm
+- Git
+
+---
+
+### Cloner le dépôt
 
 ```bash
 git clone https://github.com/houda-eljirari/academic-performance-analyzer.git
@@ -19,363 +53,190 @@ cd academic-performance-analyzer
 
 ---
 
-## 2. Configuration du Backend (Django)
+### Backend Django
 
-### Créer et activer un environnement virtuel
-
-#### Windows
+**1. Créer et activer l'environnement virtuel**
 
 ```bash
-python -m venv venv
-venv\Scripts\activate
-```
-
-#### Linux / MacOS
-
-```bash
-python3 -m venv venv
-source venv/bin/activate
-```
-
-### Installer les dépendances Python
-
-```bash
-pip install -r requirements.txt
-```
-
-### Appliquer les migrations
-
-```bash
-python manage.py migrate
-```
-
-### Lancer le serveur Django
-
-```bash
-python manage.py runserver 8000
-```
-
-Le backend sera accessible à l'adresse :
-
-```text
-http://127.0.0.1:8000
-```
-
----
-
-## 3. Configuration du Frontend (Angular)
-
-Ouvrir un nouveau terminal à la racine du projet.
-
-### Installer les dépendances Node.js
-
-```bash
-npm install
-```
-
-### Lancer l'application Angular
-
-```bash
-npm start
-```
-
-Le frontend sera accessible à l'adresse :
-
-```text
-http://localhost:4200
-```
-
----
-
-## 4. Vérification du fonctionnement
-
-Une fois les deux serveurs démarrés :
-
-* Backend Django : http://127.0.0.1:8000
-* Frontend Angular : http://localhost:4200
-
-Vérifier que :
-
-* Le tableau de bord s'affiche correctement.
-* La liste des étudiants est accessible.
-* Les prédictions peuvent être consultées.
-* Les explications SHAP sont affichées.
-* Les appels API retournent un code HTTP 200.
-
-Pour observer les requêtes API :
-
-1. Ouvrir l'application Angular.
-2. Appuyer sur F12.
-3. Ouvrir l'onglet **Network**.
-4. Vérifier les appels vers :
-
-```text
-http://localhost:8000/api/
-```
-
----
-
-## 🏗️ Architecture technique
-academic-performance-analyzer/
-├── config/              → Configuration Django (settings, urls, wsgi)
-├── students/            → Modèles + API étudiants, modules, import CSV
-├── predictions/         → Modèle Prediction en base de données
-├── analytics/           → 6 endpoints analytiques (stats, VLE, distribution...)
-├── ml_models/           → Pipeline ML (feature engineering, Random Forest, SHAP)
-│   ├── saved_models/    → Modèles .pkl sauvegardés (ignorés par git)
-│   └── management/
-│       └── commands/
-│           └── train_model.py  → Commande Django custom
-├── manage.py
-├── requirements.txt
-└── README.md
-
----
-## 👥 Équipe
-
-| Membre | Rôle | Responsabilités |
-|--------|------|-----------------|
-| **Membre 1** | Backend & IA | Django REST API · Machine Learning · SHAP · Import OULAD |
-| **Membre 2** | Frontend & Data | React · Dashboard · Visualisations · PPT · Vidéo |
-
----
-
-## ⚙️ Installation — Backend (Membre 1)
-
-### Prérequis
-- Python 3.11
-- Git
-
-### Étapes
-
-```bash
-# 1. Cloner le repo
-git clone https://github.com/VOTRE_USERNAME/academic-performance-analyzer.git
-cd academic-performance-analyzer
-
-# 2. Créer et activer l'environnement virtuel
-python -m venv venv
-
 # Windows
+python -m venv venv
 venv\Scripts\activate
+
 # macOS / Linux
+python -m venv venv
 source venv/bin/activate
+```
 
-# 3. Installer les dépendances
+**2. Installer les dépendances**
+
+```bash
 pip install -r requirements.txt
+```
 
-# 4. Créer le fichier .env à la racine
-# Contenu du .env :
-# SECRET_KEY=votre-cle-secrete-ici
-# DEBUG=True
+**3. Créer le fichier `.env` à la racine**
 
-# 5. Appliquer les migrations
+```
+SECRET_KEY=votre-cle-secrete-ici
+DEBUG=True
+```
+
+**4. Appliquer les migrations**
+
+```bash
 python manage.py migrate
+```
 
-# 6. Créer un superuser (optionnel)
+**5. Créer un superutilisateur (optionnel)**
+
+```bash
 python manage.py createsuperuser
+```
 
-# 7. Lancer le serveur
+**6. Lancer le serveur Django**
+
+```bash
 python manage.py runserver
 ```
 
-L'API est accessible sur **http://127.0.0.1:8000/api/**
+L'API est accessible sur : http://127.0.0.1:8000/api/
 
 ---
 
-## 📡 Endpoints API disponibles
+### Import des données OULAD
 
-### Étudiants
-| Méthode | Endpoint | Description |
-|---------|----------|-------------|
-| GET | `/api/students/` | Liste paginée avec filtres |
-| GET | `/api/students/{id}/` | Profil complet |
-| GET | `/api/students/at-risk/?threshold=0.7` | Étudiants à risque |
-| GET | `/api/modules/` | Liste des modules |
-
-### Import
-| Méthode | Endpoint | Description |
-|---------|----------|-------------|
-| POST | `/api/import/students/` | Import fichier CSV OULAD |
-
-### Analytiques
-| Méthode | Endpoint | Description |
-|---------|----------|-------------|
-| GET | `/api/analytics/stats/` | Statistiques globales |
-| GET | `/api/analytics/distribution/` | Distribution âge / genre / région |
-| GET | `/api/analytics/by-module/` | Stats par module académique |
-| GET | `/api/analytics/vle-activity/` | Engagement VLE |
-| GET | `/api/analytics/assessments/` | Stats évaluations |
-| GET | `/api/analytics/students/{id}/profile/` | Profil analytique complet |
-
-### Machine Learning
-| Méthode | Endpoint | Description |
-|---------|----------|-------------|
-| POST | `/api/ml/train/` | Entraîner le modèle Random Forest |
-| GET | `/api/ml/info/` | Infos sur le modèle chargé |
-| POST | `/api/ml/predict/{id}/` | Prédire résultat + SHAP |
-| POST | `/api/ml/predict-all/` | Prédire tous les étudiants en lot |
-
----
-
-## 🤖 Pipeline Machine Learning
-Dataset OULAD (CSV)
-↓
-Import & parsing (pandas)
-↓
-Feature Engineering (16 features)
-→ gender, disability, num_prev_attempts, studied_credits
-→ age_band, highest_education, imd_band
-→ avg_score, max_score, min_score
-→ nb_assessments, nb_tma, nb_cma
-→ total_clicks, nb_vle_types, nb_vle_days
-↓
-Entraînement Random Forest + GridSearchCV
-→ Optimisation : n_estimators, max_depth, min_samples_split
-→ Évaluation : Accuracy, F1, Precision, Recall, CV 5-fold
-↓
-Explicabilité SHAP (TreeExplainer)
-→ shap_values par étudiant
-→ Top features par prédiction
-↓
-Sauvegarde joblib (.pkl)
-→ random_forest.pkl
-→ label_encoders.pkl
-→ feature_cols.pkl
-
-### Entraîner le modèle
+Une fois le serveur lancé, importez les données via Postman ou curl :
 
 ```bash
-# Après avoir importé des données OULAD via POST /api/import/students/
+# Import des étudiants
+curl -X POST http://127.0.0.1:8000/api/import/students/ \
+  -F "file=@studentInfo.csv"
+
+# Import des évaluations
+curl -X POST http://127.0.0.1:8000/api/import/assessments/ \
+  -F "file=@studentAssessment.csv"
+```
+
+---
+
+### Entraînement du modèle ML
+
+Après l'import des données, entraînez le modèle XGBoost :
+
+```bash
 python manage.py train_model
 ```
 
 Résultat attendu :
-[ 1/5 ] Extraction des features depuis la DB...
-[ 2/5 ] Prétraitement des données...
-[ 3/5 ] Entraînement Random Forest...
-[ 4/5 ] Évaluation...
-[ 5/5 ] Sauvegarde du modèle...
-Accuracy : 0.82 | F1 : 0.81 | CV F1 : 0.80 ± 0.02
+
+```
+Algorithme : XGBoost
+Accuracy   : 0.8906
+F1 Score   : 0.8903
+CV F1      : 0.8159 +/- 0.0575
+```
+
+Les fichiers du modèle sont sauvegardés dans `ml_models/saved_models/`.
 
 ---
 
-## 🎨 Installation — Frontend (Membre 2)
-
-> ⚠️ **Le backend doit tourner sur http://127.0.0.1:8000 avant de démarrer le frontend.**
-
-### Prérequis
-- Node.js 18+
-- npm ou yarn
-
-### Étapes
+### Générer les visualisations ML
 
 ```bash
-# 1. Se placer dans le dossier frontend (à créer)
-cd frontend
+python manage.py generate_viz
+```
 
-# 2. Installer les dépendances
+Les graphiques sont sauvegardés dans `ml_models/visualizations/`.
+
+---
+
+### Frontend Angular
+
+**1. Aller dans le dossier frontend**
+
+```bash
+cd academic-frontend
+```
+
+**2. Installer les dépendances**
+
+```bash
 npm install
-
-# 3. Lancer le serveur de développement
-npm run dev
-# ou
-npm start
 ```
 
-L'application React sera accessible sur **http://localhost:3000**
-
-### Pages à développer
-
-| Page | Route | Données API à consommer |
-|------|-------|------------------------|
-| Dashboard | `/` | `/api/analytics/stats/` + `/api/analytics/by-module/` |
-| Import données | `/import` | `POST /api/import/students/` |
-| Liste étudiants | `/students` | `/api/students/` |
-| Profil étudiant | `/students/:id` | `/api/analytics/students/:id/profile/` |
-| Étudiants à risque | `/at-risk` | `/api/students/at-risk/` |
-| Prédictions | `/predictions` | `POST /api/ml/predict/:id/` |
-
-### Configuration Axios (à créer dans `src/api/axios.js`)
-
-```javascript
-import axios from 'axios';
-
-const api = axios.create({
-  baseURL: 'http://127.0.0.1:8000/api',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
-
-export default api;
-```
-
-### Librairies recommandées
+**3. Lancer le serveur Angular**
 
 ```bash
-npm install axios recharts react-router-dom @mui/material @emotion/react
+ng serve --port 4300
 ```
 
-| Librairie | Usage |
-|-----------|-------|
-| `axios` | Appels API vers Django |
-| `recharts` | Graphiques (barres, camembert, courbes) |
-| `react-router-dom` | Navigation entre les pages |
-| `@mui/material` | Composants UI (tableaux, cards, badges) |
+L'application est accessible sur : http://localhost:4300
+
+Identifiants de test : `admin@test.com` / `1234`
 
 ---
 
-## 📊 Exemple de réponse API — Prédiction
+### Lancer les deux serveurs simultanément
 
-```json
-POST /api/ml/predict/11391/
+Ouvrez deux terminaux :
 
-{
-  "student_id": 11391,
-  "result": "Pass",
-  "probability": 0.7823,
-  "risk_level": "LOW",
-  "shap_values": {
-    "avg_score": 0.1842,
-    "total_clicks": 0.1203,
-    "studied_credits": 0.0891,
-    "nb_assessments": 0.0654,
-    "num_prev_attempts": -0.0432
-  }
-}
+```bash
+# Terminal 1 — Backend
+cd academic-performance-analyzer
+venv\Scripts\activate   # ou source venv/bin/activate sur Mac/Linux
+python manage.py runserver
+
+# Terminal 2 — Frontend
+cd academic-performance-analyzer/academic-frontend
+ng serve --port 4300
 ```
 
-**Interprétation des `shap_values` pour le frontend :**
-- Valeur **positive** → pousse vers la réussite
-- Valeur **négative** → pousse vers l'échec
-- Plus la valeur absolue est grande → plus la feature est influente
+---
+
+## Architecture technique
+
+``` bash
+academic-performance-analyzer/
+├── config/                  Django — configuration, settings, urls
+├── students/                Modèles OULAD, CRUD, import CSV
+├── analytics/               Endpoints statistiques et alertes
+├── predictions/             Stockage prédictions et recommandations
+├── ml_models/               Pipeline ML — XGBoost, SHAP, joblib
+│   ├── feature_engineering.py
+│   ├── train.py
+│   ├── predictor.py
+│   ├── generate_visualizations.py
+│   └── management/commands/train_model.py
+├── manage.py
+├── requirements.txt
+└── academic-frontend/       Angular 21 — SPA frontend
+    └── src/app/
+        ├── core/services/   ApiService, AuthService
+        └── pages/           Dashboard, Students, Grades, Predictions,
+                             Alerts, SHAP, CsvImport, StudentProfile
+```
 
 ---
 
-## 🗓️ Deadline
+## Résultats du modèle ML
 
-**02/06/2026 à 23h59** — Dépôt sur Google Classroom
-
-### Checklist finale
-- [ ] Dépôt GitHub **public**
-- [ ] Commits individuels des deux membres (vérifiés par l'enseignant)
-- [ ] Rapport PDF déposé
-- [ ] Présentation PPT déposée
-- [ ] Vidéo démo (max 15 min) déposée
-- [ ] Code source complet sur GitHub
-
----
-
-## 📁 Dataset OULAD
-
-Téléchargez le dataset sur : https://analyse.kmi.open.ac.uk/open_dataset
-
-Fichiers nécessaires pour l'import :
-- `studentInfo.csv` → données démographiques étudiants
-- `studentAssessment.csv` → notes et évaluations
-- `studentVle.csv` → activité sur la plateforme VLE
+| Métrique | Valeur |
+|---|---|
+| Algorithme | XGBoost |
+| Dataset | 28 785 étudiants OULAD |
+| Accuracy | 0.8906 (89.06%) |
+| F1-Score | 0.8903 |
+| Precision | 0.8939 |
+| Recall | 0.8906 |
+| CV F1 (5-fold) | 0.8159 +/- 0.0575 |
+| Features | 22 (démographiques, assessment, VLE) |
 
 ---
 
-*Projet réalisé dans le cadre du Master SDIA — Technologies Web · 2025/2026*
+### Équipe
+
+| Membre | Rôle | Responsabilités |
+|---|---|---|
+| EL JIRARI Houda | Backend et Intelligence Artificielle | Django REST API, Pipeline ML, SHAP, Import OULAD |
+| EL BARNAOUI Maroua | Frontend et Visualisations | Angular, Dashboard, Visualisation SHAP |
+
+
